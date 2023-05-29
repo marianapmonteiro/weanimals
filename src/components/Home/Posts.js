@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Typography, Button, CardMedia, Divider } from "@mui/material";
 import styled from "@emotion/styled";
 import Imagem from "../../Images/download.jpg";
+import theme from "../../theme/theme";
 
 const GridContainer = styled.div`
 	width: 100%;

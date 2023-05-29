@@ -33,15 +33,14 @@ function Home() {
 		<>
 			<Container
 				sx={{
-					height: "100%",
+					minHeight: "100%",
 					paddingTop: "5%",
 					display: "flex",
 					flexDirection: "column",
 					justifyContent: "center",
 					alignItems: "center",
-
+					height: "100%",
 					"@media (max-width: 600px)": {
-						height: "100%",
 						paddingTop: "0",
 					},
 				}}
