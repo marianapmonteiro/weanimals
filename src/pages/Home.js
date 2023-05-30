@@ -14,6 +14,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ListagemPets from "../components/Home/ListagemPets";
 import StyledButton from "../components/Button";
 import CuidadosAnimais from "../components/Home/CuidadosAnimais";
+import Adocao from "../components/Home/Adocao";
 
 const Circle = styled.div`
 	width: 60vh;
@@ -112,10 +113,18 @@ function Home() {
 					</Grid>
 				</Grid>
 
-				<ListagemPets />
-				<CuidadosAnimais />
-				<Divider style={{ paddingBottom: "25%" }} />
-				<Posts />
+				<Box>
+					<ListagemPets />
+				</Box>
+				<Box>
+					<CuidadosAnimais />
+				</Box>
+				<Box>
+					<Adocao />
+				</Box>
+				<Box>
+					<Posts />
+				</Box>
 			</Container>
 		</>
 	);

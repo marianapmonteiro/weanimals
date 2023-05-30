@@ -35,6 +35,12 @@ function Posts() {
 	]);
 	return (
 		<GridContainer>
+			<Typography
+				variant="h4"
+				style={{ fontWeight: "bolder", marginBottom: "1em" }}
+			>
+				Saiba mais
+			</Typography>
 			{posts.map((item) => (
 				<>
 					<GridItem key={item}>
