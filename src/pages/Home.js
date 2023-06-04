@@ -1,20 +1,14 @@
-import React from "react";
-import {
-	Typography,
-	Container,
-	Box,
-	Button,
-	Divider,
-	Grid,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Typography, Container, Box, Grid } from "@mui/material";
 import styled from "@emotion/styled";
 import theme from "../theme/theme";
 import Posts from "../components/Home/Posts";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ListagemPets from "../components/Home/ListagemPets";
 import StyledButton from "../components/Button";
 import CuidadosAnimais from "../components/Home/CuidadosAnimais";
 import Adocao from "../components/Home/Adocao";
+import AjudeComunidade from "../components/Home/AjudeComunidade";
+import { useNavigate } from "react-router-dom";
 
 const Circle = styled.div`
 	width: 60vh;
@@ -27,22 +21,45 @@ const Circle = styled.div`
 		width: 50vw;
 		height: 30vh;
 	}
+	@media (min-width: 1736px) {
+		width: 30vw;
+		height: 50vh;
+	},
+}}
 `;
 
 function Home() {
+	const [isMedium, setIsMedium] = useState(window.innerWidth <= 1919);
+	const navigate = useNavigate();
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMedium(window.innerWidth <= 1919);
+		};
+
+		window.addEventListener("resize", handleResize);
+
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, []);
+
 	return (
 		<>
 			<Container
+				maxWidth={isMedium ? "lg" : "xl"}
 				sx={{
-					minHeight: "100%",
+					height: "100%",
+					width: "100%",
 					paddingTop: "5%",
 					display: "flex",
 					flexDirection: "column",
 					justifyContent: "center",
 					alignItems: "center",
-					height: "100%",
 					"@media (max-width: 600px)": {
 						paddingTop: "0",
+					},
+					"@media (min-width: 1735px)": {
+						paddingTop: "10%",
 					},
 				}}
 			>
@@ -102,29 +119,35 @@ function Home() {
 								width="60%"
 								variant="contained"
 								sx={{
+									background:
+										"linear-gradient(90deg, rgba(241,153,23,1) 35%, rgba(250,197,82,1) 100%)",
+									color: "white",
+									borderRadius: "8px",
+									paddingInline: "10px",
 									width: "60vh",
 									"@media (max-width: 600px)": {
 										width: "80vw",
 									},
+									"@media (min-width: 1736px)": {
+										width: "30vh",
+									},
 								}}
 								text={"COMEÇAR"}
+								onClick={() => {
+									navigate("/pareamentopet");
+								}}
 							/>
 						</Box>
 					</Grid>
 				</Grid>
 
-				<Box>
-					<ListagemPets />
-				</Box>
-				<Box>
-					<CuidadosAnimais />
-				</Box>
-				<Box>
-					<Adocao />
-				</Box>
-				<Box>
-					<Posts />
-				</Box>
+				<ListagemPets />
+
+				<CuidadosAnimais />
+
+				<Adocao />
+				<AjudeComunidade />
+				<Posts />
 			</Container>
 		</>
 	);

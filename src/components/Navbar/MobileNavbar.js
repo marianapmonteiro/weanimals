@@ -11,7 +11,7 @@ const Container = styled.div`
 	align-items: center;
 	height: 80px;
 	padding-inline: 20px;
-	background-color: ${({ theme }) => theme.palette.primary.dark};
+	background-color: transparent;
 `;
 
 const Menu = styled.div`
@@ -21,6 +21,7 @@ const Menu = styled.div`
 	gap: 40px;
 	color: white;
 	text-transform: uppercase;
+	color: #252247;
 `;
 const Item = styled.div`
 	cursor: pointer;
@@ -37,7 +38,7 @@ function MobileNavbar() {
 
 			<Menu>
 				<MenuIcon
-					style={{ cursor: "pointer" }}
+					style={{ cursor: "pointer", color: "#252247" }}
 					onClick={() => {
 						setOpen(true);
 					}}

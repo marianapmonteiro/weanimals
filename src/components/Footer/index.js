@@ -11,7 +11,7 @@ const ContainerAll = styled.div`
 	right: 0;
 	width: 100%;
 	height: 50px;
-	background-color: ${({ theme }) => theme.palette.primary.dark};
+	background-color: ${({ theme }) => theme.palette.primary.main};
 	display: flex;
 	justify-content: center;
 	align-items: center;

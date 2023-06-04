@@ -73,7 +73,7 @@ const Adocao = () => {
 						<StyledButton
 							variant="contained"
 							text="Ver bichinhos para adoção"
-						></StyledButton>
+						/>
 					</Box>
 				</Grid>
 			</Grid>

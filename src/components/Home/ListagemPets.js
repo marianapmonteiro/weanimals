@@ -1,5 +1,6 @@
 import { Typography, Box, Grid, Button } from "@mui/material";
 import cat from "../../Images/cat2.png";
+import dog from "../../Images/dog2.png";
 import StyledButton from "../Button";
 
 const ListagemPets = () => {
@@ -11,6 +12,9 @@ const ListagemPets = () => {
 				display: "flex",
 				justifyContent: "center",
 				alignItems: "center",
+				"@media (max-width: 600px)": {
+					minHeight: "-webkit-fill-available",
+				},
 			}}
 		>
 			<Grid
@@ -70,7 +74,7 @@ const ListagemPets = () => {
 						alignItems: "flex-end",
 					}}
 				>
-					<img src={cat} alt="Cat" width="350px" height="350px" />
+					<img src={dog} alt="Dog" width="350px" height="350px" />
 				</Grid>
 			</Grid>
 		</Box>

@@ -38,13 +38,17 @@ function CuidadosAnimais() {
 		<Box
 			sx={{
 				width: "100%",
-				height: "100vh",
+				minHeight: "-webkit-fill-available",
 				display: "flex",
 				justifyContent: "center",
 				alignItems: "center",
 				gap: "5%",
 				"@media (max-width: 600px)": {
 					flexWrap: "wrap",
+					maxHeight: "-webkit-fill-available",
+					gap: "2em",
+					paddingBottom: "10em",
+					paddingTop: "10em",
 				},
 			}}
 		>

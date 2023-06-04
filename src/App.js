@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ThemeProvider, CssBaseline, GlobalStyles } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import theme from "./theme/theme";
 import RoutesApp from "./RoutesApp";
 import Navbar from "./components/Navbar/Navbar";
@@ -8,7 +9,7 @@ import Footer from "./components/Footer";
 
 function App() {
 	const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
+	const navigate = useNavigate();
 	useEffect(() => {
 		const handleResize = () => {
 			setIsMobile(window.innerWidth <= 768);
@@ -33,7 +34,11 @@ function App() {
 					},
 				}}
 			/>
-			{isMobile ? <MobileNavbar /> : <Navbar />}
+			{isMobile ? (
+				<MobileNavbar navigate={navigate} />
+			) : (
+				<Navbar navigate={navigate} />
+			)}
 
 			<div style={{ paddingBottom: "100px", position: "relative" }}>
 				<RoutesApp />

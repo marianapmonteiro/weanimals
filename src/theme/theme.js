@@ -52,6 +52,9 @@ let theme = createTheme({
 				fontWeight: "light",
 				fontStyle: "normal",
 			},
+			label: {
+				color: "white", // Set the color for the button label
+			},
 		},
 	},
 });

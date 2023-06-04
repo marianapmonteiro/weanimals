@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Drawer, IconButton, Typography } from "@mui/material";
+import { Drawer, Box, Typography, Divider, Button } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
-import theme from "../../theme/theme";
+import StyledButton from "../Button/index";
+import LogoutIcon from "@mui/icons-material/Logout";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const Menu = styled.div`
 	width: 250px;
@@ -14,7 +16,7 @@ const Menu = styled.div`
 	justify-content: flex-start;
 	align-items: flex-start;
 	gap: 40px;
-	color: ${({ theme }) => theme.palette.primary.dark};
+	background-color: white;
 	text-transform: uppercase;
 	padding-top: 50px;
 `;
@@ -32,11 +34,11 @@ const Icon = styled.div`
 	justify-content: flex-end;
 	align-items: flex-end;
 `;
-const MobileMenu = ({ open, setOpen }) => {
+const MobileMenu = ({ open, setOpen, navigate }) => {
 	const handleDrawerClose = () => {
 		setOpen(false);
 	};
-
+	const [user, setUser] = useState("aaa");
 	return (
 		<>
 			<Drawer
@@ -45,35 +47,81 @@ const MobileMenu = ({ open, setOpen }) => {
 				onClose={handleDrawerClose}
 				variant="temporary"
 			>
-				<Icon>
-					{" "}
-					<CloseIcon
-						style={{ color: theme.palette.primary.dark, cursor: "pointer" }}
-						onClick={() => {
-							handleDrawerClose();
-						}}
-					/>
-				</Icon>
+				<Box
+					style={{
+						backgroundImage:
+							"linear-gradient(to bottom, #a39ce7, #8f88d0, #7b74b9, #6761a3, #544e8d)",
+						borderBottomRightRadius: "150px",
+					}}
+				>
+					<Icon>
+						{" "}
+						<CloseIcon
+							style={{ color: "#252247", cursor: "pointer" }}
+							onClick={() => {
+								handleDrawerClose();
+							}}
+						/>
+					</Icon>
 
-				<Logo>
-					<h2>WE S2 ANIMALS</h2>
-				</Logo>
-
+					<Logo>
+						<h2>WE S2 ANIMALS</h2>
+					</Logo>
+				</Box>
 				<Menu>
 					{/* Place your content inside the drawer */}
 
 					<div>
-						<Typography>Animais</Typography>
+						<Button style={{ width: "100%" }}>
+							<Typography color="#252247" style={{ fontWeight: "bold" }}>
+								Animais
+							</Typography>
+						</Button>
 					</div>
 					<div>
-						<Typography>Adoção</Typography>
+						<Button style={{ width: "100%" }}>
+							<Typography color="#252247" style={{ fontWeight: "bold" }}>
+								Adoção
+							</Typography>
+						</Button>
 					</div>
 					<div>
-						<Typography>Quem Somos</Typography>
+						<Button style={{ width: "100%" }}>
+							<Typography color="#252247" style={{ fontWeight: "bold" }}>
+								Quem Somos
+							</Typography>
+						</Button>
 					</div>
-					<div>
-						<Typography>Login</Typography>
-					</div>
+					<Divider style={{ width: "100%" }} />
+					{user !== "" ? (
+						<>
+							<div style={{ display: "flex", gap: "1em" }}>
+								<AccountCircleIcon />{" "}
+								<Typography style={{ textTransform: "none" }}>
+									Bem vindo, {user}
+								</Typography>
+							</div>
+							<div
+								style={{ display: "flex", gap: "1em" }}
+								onClick={() => {
+									navigate("/login");
+								}}
+							>
+								<LogoutIcon /> <Typography>Sair</Typography>
+							</div>
+						</>
+					) : (
+						<div>
+							<StyledButton
+								text="Login"
+								padding="30px"
+								onClick={() => {
+									navigate("/login");
+									setUser("");
+								}}
+							/>
+						</div>
+					)}
 				</Menu>
 			</Drawer>
 		</>
