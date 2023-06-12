@@ -1,5 +1,5 @@
 import { Typography, Box, Grid, Button } from "@mui/material";
-import dog from "../../Images/dog.png";
+import cat from "../../Images/cutecat.jpeg";
 import StyledButton from "../Button";
 
 const Adocao = () => {
@@ -11,6 +11,7 @@ const Adocao = () => {
 				display: "flex",
 				justifyContent: "center",
 				alignItems: "center",
+
 				"@media (max-width: 600px)": {
 					minHeight: window.innerHeight,
 				},
@@ -34,7 +35,13 @@ const Adocao = () => {
 						alignItems: "center",
 					}}
 				>
-					<img src={dog} alt="Dog" width="250px" height="350px" />
+					<img
+						src={cat}
+						alt="Cat"
+						width="250px"
+						height="250px"
+						style={{ borderRadius: "1000px" }}
+					/>
 				</Grid>
 				<Grid
 					item

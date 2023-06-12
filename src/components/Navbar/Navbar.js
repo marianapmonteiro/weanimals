@@ -57,10 +57,21 @@ function Navbar({ navigate }) {
 						Animais
 					</Typography>
 				</Item>
-				<Item>
+				<Item style={{ position: "relative" }}>
 					<Typography variant="p" color="#252247">
 						Adoção
 					</Typography>
+					<div
+						style={{
+							position: "absolute",
+							color: "red",
+							bottom: -20,
+							textAlign: "center",
+							width: "100%",
+						}}
+					>
+						<p style={{ fontSize: "8px" }}>Em breve</p>
+					</div>
 				</Item>
 				<Item>
 					<Typography

@@ -9,6 +9,8 @@ import ListaAnimais from "./pages/ListaAnimais";
 import AdicionarEspecie from "./pages/auth/AdicionarEspecie";
 import AdicionarRaca from "./pages/auth/AdicionarRaca";
 import PareamentoPet from "./pages/PareamentoPet";
+import Especie from "./pages/Especie";
+import Raca from "./pages/Raca";
 
 function RoutesApp() {
 	return (
@@ -21,6 +23,8 @@ function RoutesApp() {
 			<Route path="/addespecie" element={<AdicionarEspecie />}></Route>
 			<Route path="/addraca" element={<AdicionarRaca />}></Route>
 			<Route path="/pareamentopet" element={<PareamentoPet />}></Route>
+			<Route path="/especie" element={<Especie />}></Route>
+			<Route path="/raca" element={<Raca />}></Route>
 		</Routes>
 	);
 }

@@ -10,7 +10,7 @@ const GridContainer = styled.div`
 	display: flex;
 	gap: 20px;
 	flex-direction: column;
-	flex-grow: 1;
+	margin-top: 5em;
 `;
 
 const GridItem = styled.div`

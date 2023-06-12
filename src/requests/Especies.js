@@ -25,3 +25,14 @@ export const AddEspecie = async (
 			console.log(err);
 		});
 };
+
+export const GetEspecies = async (setEspecies) => {
+	await api
+		.get(`/app/getespecies`)
+		.then((res) => {
+			setEspecies(res.data);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+};

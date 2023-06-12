@@ -1,75 +1,81 @@
 import { Typography, Box, Grid, Button } from "@mui/material";
 import dog from "../../Images/dog.png";
 import StyledButton from "../Button";
-import cat from "../../Images/cat.png";
+import bunny from "../../Images/coelhinho.png";
+import paws from "../../Images/paws.png";
 
 const AjudeComunidade = () => {
 	return (
-		<Box
-			sx={{
-				width: "100%",
-				height: "100vh",
-				display: "flex",
-				flexDirection: "column",
-				justifyContent: "center",
-				alignItems: "center",
-				position: "relative",
-				"@media (max-width: 600px)": {
-					minHeight: window.innerHeight,
-				},
-			}}
-		>
-			<img
-				src={cat}
-				alt="cat"
-				width="250px"
-				height="250px"
-				style={{
-					position: "absolute",
-					top: "5%",
-					left: "50%",
-					transform: "translateX(-50%)",
-					zIndex: 1,
-				}}
-			/>
+		<>
+			<img src={paws} style={{ width: "100%" }} />
 			<Box
 				sx={{
-					width: "80%",
-					height: "50vh",
-					borderRadius: "9px",
-					background:
-						"linear-gradient(90deg, rgba(241,153,23,1) 35%, rgba(250,197,82,1) 100%)",
-					color: "white",
+					width: "100%",
+					height: "100vh",
 					display: "flex",
-					gap: "2em",
 					flexDirection: "column",
 					justifyContent: "center",
 					alignItems: "center",
-					paddingInline: "16px",
-					textAlign: "center",
+
+					"@media (max-width: 600px)": {
+						minHeight: window.innerHeight,
+					},
 				}}
 			>
-				<Typography variant="h4" style={{ fontWeight: "bold" }}>
-					Ajude a comunidade!
-				</Typography>
-				<Typography variant="body1" style={{ color: "white" }}>
-					Tem algum bichinho como membro da família? Sabe todos os cuidados que
-					ele precisa e quer ajudar a novos tutores cuidarem melhor do seu novo
-					bichinho? Aqui você pode! Basta entrar na aba "Animais", escolher a
-					categoria e adicionar sobre o bichinho!
-				</Typography>
-				<Button
-					variant="contained"
-					style={{
-						backgroundColor: "white",
-						paddingInline: "4em",
-						borderRadius: "20px",
+				<img
+					src={bunny}
+					alt="coelho"
+					width="300px"
+					height="300px"
+					style={
+						{
+							// position: "absolute",
+							// // top: "5%",
+							// left: "50%",
+							// transform: "translateX(-50%)",
+							// zIndex: 1,
+						}
+					}
+				/>
+				<Box
+					sx={{
+						width: "80%",
+						height: "50vh",
+						borderRadius: "9px",
+						background:
+							"linear-gradient(90deg, rgba(241,153,23,1) 35%, rgba(250,197,82,1) 100%)",
+						color: "white",
+						display: "flex",
+						gap: "2em",
+						flexDirection: "column",
+						justifyContent: "center",
+						alignItems: "center",
+						paddingInline: "16px",
+						textAlign: "center",
 					}}
 				>
-					Ir para⠀ ▶
-				</Button>
+					<Typography variant="h4" style={{ fontWeight: "bold" }}>
+						Ajude a comunidade!
+					</Typography>
+					<Typography variant="body1" style={{ color: "white" }}>
+						Tem algum bichinho como membro da família? Sabe todos os cuidados
+						que ele precisa e quer ajudar a novos tutores cuidarem melhor do seu
+						novo bichinho? Aqui você pode! Basta entrar na aba "Animais",
+						escolher a categoria e adicionar sobre o bichinho!
+					</Typography>
+					<Button
+						variant="contained"
+						style={{
+							backgroundColor: "white",
+							paddingInline: "4em",
+							borderRadius: "20px",
+						}}
+					>
+						Ir para⠀ ▶
+					</Button>
+				</Box>
 			</Box>
-		</Box>
+		</>
 	);
 };
 

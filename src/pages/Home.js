@@ -140,12 +140,10 @@ function Home() {
 						</Box>
 					</Grid>
 				</Grid>
-
 				<ListagemPets />
-
 				<CuidadosAnimais />
-
 				<Adocao />
+
 				<AjudeComunidade />
 				<Posts />
 			</Container>

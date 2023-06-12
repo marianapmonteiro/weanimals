@@ -16,6 +16,7 @@ const UlStyled = styled.ul`
 	display: flex;
 	gap: 4em;
 	padding: 0;
+	flex-wrap: wrap;
 	@media (max-width: ${theme.breakpoints.values.md}px) {
 		flex-direction: column;
 		flex-wrap: wrap;
@@ -24,6 +25,19 @@ const UlStyled = styled.ul`
 		align-items: flex-start;
 		padding: 0;
 		margin-top: 1em;
+	}
+`;
+
+const ListItem = styled.li`
+	list-style: none;
+	cursor: pointer;
+
+	& a {
+		text-decoration: none;
+	}
+
+	& a:hover {
+		text-decoration: underline;
 	}
 `;
 
@@ -55,8 +69,10 @@ const TitleandSearchBox = styled.div`
 	width: 100%;
 `;
 
-function Categorias({ Racas, Especies }) {
+function Categorias({ Racas, Especies, Category }) {
 	const navigate = useNavigate();
+	console.log("racas:", Racas);
+	console.log("caregoty", Category);
 	return (
 		<Container>
 			<BoxCategory>
@@ -78,11 +94,29 @@ function Categorias({ Racas, Especies }) {
 						}}
 					/>
 				</TitleandSearchBox>
-
 				<UlStyled>
-					{Especies.map((item) => {
-						return <li style={{ listStyle: "none" }}>{item}</li>;
-					})}
+					{Especies.length > 0 ? (
+						Especies.map((item) => (
+							<ListItem
+								key={item.nome}
+								onClick={() => {
+									navigate("/especie", {
+										state: {
+											nome: item.nome,
+											descricao: item.descricao,
+											etiquetas: item.etiquetas,
+											imagens: item.imagens,
+											racas: item.racas,
+										},
+									});
+								}}
+							>
+								<a>{item.nome}</a>
+							</ListItem>
+						))
+					) : (
+						<li style={{ listStyle: "none" }}>Nenhuma espécie encontrada </li>
+					)}
 				</UlStyled>
 				<BoxAddIcon>
 					<AddIcon
@@ -92,12 +126,16 @@ function Categorias({ Racas, Especies }) {
 							cursor: "pointer",
 						}}
 						onClick={() => {
-							navigate("/addespecie");
+							navigate("/addespecie", {
+								state: {
+									category: Category,
+								},
+							});
 						}}
 					/>
 				</BoxAddIcon>
 			</BoxCategory>
-			<Divider width="100%" />
+			<Divider width="100%" style={{ marginTop: "1em" }} />
 			<BoxCategory>
 				<TitleandSearchBox style={{ marginTop: "1em" }}>
 					<Typography variant="h4" style={{ fontWeight: "bold" }}>
@@ -118,9 +156,28 @@ function Categorias({ Racas, Especies }) {
 					/>
 				</TitleandSearchBox>
 				<UlStyled>
-					{Racas.map((item) => {
-						return <li>{item}</li>;
-					})}
+					{Racas.length > 0 ? (
+						Racas.map((item) => (
+							<ListItem
+								key={item}
+								onClick={() => {
+									navigate("/raca", {
+										state: {
+											nome: item.nome,
+											descricao: item.descricao,
+											cuidadosEspecificos: item.cuidadosEspecificos,
+											imagens: item.imagens,
+											especie: item.especie,
+										},
+									});
+								}}
+							>
+								<a>{item.nome}</a>
+							</ListItem>
+						))
+					) : (
+						<li style={{ listStyle: "none" }}>Nenhuma raça encontrada </li>
+					)}
 				</UlStyled>
 				<BoxAddIcon>
 					<AddIcon
@@ -130,7 +187,12 @@ function Categorias({ Racas, Especies }) {
 							cursor: "pointer",
 						}}
 						onClick={() => {
-							navigate("/addraca");
+							navigate("/addraca", {
+								state: {
+									especies: Especies,
+									category: Category,
+								},
+							});
 						}}
 					/>
 				</BoxAddIcon>

@@ -1,6 +1,5 @@
 import { Typography, Box, Grid, Button } from "@mui/material";
-import cat from "../../Images/cat2.png";
-import dog from "../../Images/dog2.png";
+import dog from "../../Images/cachorrinho.png";
 import StyledButton from "../Button";
 
 const ListagemPets = () => {

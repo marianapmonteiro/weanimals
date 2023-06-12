@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
 	Typography,
 	Container,
@@ -15,6 +16,7 @@ import AddIcon from "@mui/icons-material/Add";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { AddEspecie } from "../../requests/Especies";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Box = styled.div`
 	width: 100%;
@@ -90,6 +92,9 @@ const Imgs = styled.img`
 
 function AdicionarEspecie() {
 	const [isMedium, setIsMedium] = useState(window.innerWidth <= 1919);
+	const location = useLocation();
+	const category = location.state.category;
+
 	useEffect(() => {
 		const handleResize = () => {
 			setIsMedium(window.innerWidth <= 1919);
@@ -106,14 +111,15 @@ function AdicionarEspecie() {
 	const [nome, setNome] = useState("");
 	const [descricao, setDescricao] = useState("");
 	const [files, setFiles] = useState([]);
-	const [imagens, setImagens] = useState([]);
 	const [etiqueta, setEtiqueta] = useState("");
 	const [etiquetas, setEtiquetas] = useState([]);
-	const [category, setCategory] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [helpText, setHelpText] = useState(false);
 
 	const handleEtiquetas = () => {
 		setEtiquetas((prevValor) => [...prevValor, etiqueta]);
+		console.log("chama etiqueta funcation");
+		console.log("etiqueta", etiquetas);
 	};
 
 	const handleDeleteEtiqueta = (index) => {
@@ -124,7 +130,6 @@ function AdicionarEspecie() {
 		});
 	};
 	const handleImage = (e) => {
-		console.log("chamando a funcao");
 		const newImages = Array.from(e.target.files);
 		setFiles((prevImages) => [...prevImages, ...newImages]);
 	};
@@ -139,33 +144,47 @@ function AdicionarEspecie() {
 
 	const addEspecie = async () => {
 		setLoading(true);
+		if (
+			nome === "" ||
+			descricao === "" ||
+			files.length === 0 ||
+			etiquetas.length === 0
+		) {
+			setHelpText(true);
+		} else {
+			setHelpText(false);
+			try {
+				const formData = new FormData();
+				const key = "8b39fd8e05217d4a8bc071ccfe514541";
 
-		try {
-			const formData = new FormData();
-			const key = "8b39fd8e05217d4a8bc071ccfe514541";
+				for (let i = 0; i < files.length; i++) {
+					formData.append("image", files[i]);
+				}
 
-			for (let i = 0; i < files.length; i++) {
-				formData.append("image", files[i]);
+				const imageUrls = [];
+
+				for (let i = 0; i < files.length; i++) {
+					const response = await axios({
+						method: "post",
+						url: `https://api.imgbb.com/1/upload?key=${key}`,
+						data: formData,
+					});
+					const imageUrl = response.data.data.url;
+					imageUrls.push(imageUrl);
+				}
+
+				await AddEspecie(nome, descricao, imageUrls, etiquetas, category);
+				Swal.fire({
+					position: "center",
+					icon: "success",
+					title: "Espécie adicionada com sucesso!",
+					showConfirmButton: false,
+					timer: 1500,
+				});
+			} catch (error) {
+				console.error("Error uploading images:", error);
 			}
-
-			console.log("formData:", formData);
-
-			const response = await axios({
-				method: "post",
-				url: `https://api.imgbb.com/1/upload?key=${key}`,
-				data: formData,
-			});
-
-			const imageUrl = response.data.url;
-
-			console.log("Image URL:", imageUrl);
-			setImagens((prevImagens) => [...prevImagens, imageUrl]);
-
-			await AddEspecie(nome, descricao, imagens, etiquetas, category);
-		} catch (error) {
-			console.error("Error uploading images:", error);
 		}
-
 		setLoading(false);
 	};
 
@@ -205,7 +224,7 @@ function AdicionarEspecie() {
 						style={{ width: "50%" }}
 						margin="dense"
 						onChange={(e) => {
-							setNome(e);
+							setNome(e.target.value);
 						}}
 					/>
 				</BoxForm>
@@ -218,7 +237,7 @@ function AdicionarEspecie() {
 						multiline
 						margin="dense"
 						onChange={(e) => {
-							setDescricao(e);
+							setDescricao(e.target.value);
 						}}
 					/>
 				</BoxForm>
@@ -309,21 +328,27 @@ function AdicionarEspecie() {
 						</div>
 					) : (
 						<>
-							{etiquetas.map((item) => (
+							{etiquetas.map((item, index) => (
 								<Alert key={item}>
 									<Typography variant="body1" style={{ color: "white" }}>
 										{item}
 									</Typography>
 									<HighlightOffIcon
 										style={{ color: "white", cursor: "pointer" }}
-										onClick={handleDeleteEtiqueta}
+										onClick={() => handleDeleteEtiqueta(index)}
 									/>
 								</Alert>
 							))}
 						</>
 					)}
 				</BoxExemplos>
-
+				{helpText ? (
+					<BoxForm>
+						<Typography variant="body1" style={{ color: "red" }}>
+							Preencha todos os campos!
+						</Typography>
+					</BoxForm>
+				) : null}
 				{loading ? (
 					<CircularProgress />
 				) : (
