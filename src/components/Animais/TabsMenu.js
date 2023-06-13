@@ -1,21 +1,36 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Typography } from "@mui/material";
 import theme from "../../theme/theme";
 import { Pets } from "@mui/icons-material";
 
 function TabsMenu({ value, handleChange, listagemAnimais }) {
+	const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth <= 600);
+		};
+		window.addEventListener("resize", handleResize);
+
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, []);
+
 	return (
 		<>
 			<div
 				style={{
-					width: "20%",
+					width: isMobile ? "100%" : "20%",
 					marginTop: "2em",
 					backgroundColor: theme.palette.background.default,
+
 				}}
 			>
 				<Tabs
-					orientation="vertical"
-					variant="standart"
+					scrollButtons
+					orientation={isMobile ? "horizontal" : "vertical"}
+					variant={isMobile ? "scrollable" : "standart"}
 					sx={{
 						display: "flex",
 						justifyContent: "flex-start",

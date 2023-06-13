@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react'
 import { Typography, Box, Grid, Button } from "@mui/material";
 import dog from "../../Images/dog.png";
 import StyledButton from "../Button";
@@ -5,20 +6,33 @@ import bunny from "../../Images/coelhinho.png";
 import paws from "../../Images/paws.png";
 
 const AjudeComunidade = () => {
+	const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth <= 768);
+		};
+
+		window.addEventListener("resize", handleResize);
+
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
+	}, []);
 	return (
 		<>
-			<img src={paws} style={{ width: "100%" }} />
+			{/* <img src={paws} style={{ width: "100%" }} /> */}
 			<Box
 				sx={{
 					width: "100%",
 					height: "100vh",
 					display: "flex",
 					flexDirection: "column",
-					justifyContent: "center",
+					justifyContent: "flex-start",
 					alignItems: "center",
 
 					"@media (max-width: 600px)": {
-						minHeight: window.innerHeight,
+						// minHeight: window.innerHeight,
+						minHeight: "100vh",
 					},
 				}}
 			>
@@ -39,25 +53,39 @@ const AjudeComunidade = () => {
 				/>
 				<Box
 					sx={{
-						width: "80%",
+						width: "50%",
 						height: "50vh",
 						borderRadius: "9px",
 						background:
 							"linear-gradient(90deg, rgba(241,153,23,1) 35%, rgba(250,197,82,1) 100%)",
 						color: "white",
 						display: "flex",
-						gap: "2em",
+						gap: "3em",
 						flexDirection: "column",
 						justifyContent: "center",
 						alignItems: "center",
-						paddingInline: "16px",
+						paddingInline: "100px",
 						textAlign: "center",
+						"@media (max-width: 600px)": {
+							paddingInline: '10%',
+							paddingTop: '5px',
+							paddingBottom: '5px',
+							width: "90%",
+							gap: "1em",
+						},
+						"@media screen and (min-width: 600px) and (max-width: 920px)": {
+							paddingInline: '50px',
+							paddingTop: '5px',
+							paddingBottom: '5px',
+							width: "90%",
+							gap: "5em",
+						},
 					}}
 				>
-					<Typography variant="h4" style={{ fontWeight: "bold" }}>
+					<Typography variant={isMobile ? "h6" : "h4"} style={{ fontWeight: "bold", color: '#252247' }}>
 						Ajude a comunidade!
 					</Typography>
-					<Typography variant="body1" style={{ color: "white" }}>
+					<Typography variant={isMobile ? "body2" : "body1"} style={{ color: "white" }}>
 						Tem algum bichinho como membro da família? Sabe todos os cuidados
 						que ele precisa e quer ajudar a novos tutores cuidarem melhor do seu
 						novo bichinho? Aqui você pode! Basta entrar na aba "Animais",

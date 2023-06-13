@@ -6,6 +6,7 @@ import styled from "@emotion/styled";
 import StyledButton from "../Button/index";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import logo from '../../Images/logo.png'
 
 const Menu = styled.div`
 	width: 250px;
@@ -51,7 +52,7 @@ const MobileMenu = ({ open, setOpen, navigate }) => {
 					style={{
 						backgroundImage:
 							"linear-gradient(to bottom, #a39ce7, #8f88d0, #7b74b9, #6761a3, #544e8d)",
-						borderBottomRightRadius: "150px",
+						// borderBottomRightRadius: "150px",
 					}}
 				>
 					<Icon>
@@ -65,14 +66,18 @@ const MobileMenu = ({ open, setOpen, navigate }) => {
 					</Icon>
 
 					<Logo>
-						<h2>WE S2 ANIMALS</h2>
+						<img src={logo} alt='logo' style={{ width: "160px", height: "50px" }} onClick={() => {
+							navigate("/");
+						}} />
 					</Logo>
 				</Box>
 				<Menu>
 					{/* Place your content inside the drawer */}
 
 					<div>
-						<Button style={{ width: "100%" }}>
+						<Button style={{ width: "100%" }}  onClick={() => {
+							navigate("/animais");
+						}}>
 							<Typography color="#252247" style={{ fontWeight: "bold" }}>
 								Animais
 							</Typography>
@@ -87,7 +92,9 @@ const MobileMenu = ({ open, setOpen, navigate }) => {
 					</div>
 					<div>
 						<Button style={{ width: "100%" }}>
-							<Typography color="#252247" style={{ fontWeight: "bold" }}>
+							<Typography color="#252247" style={{ fontWeight: "bold" }}  onClick={() => {
+							navigate("/about");
+						}}>
 								Quem Somos
 							</Typography>
 						</Button>

@@ -4,6 +4,8 @@ import styled from "@emotion/styled";
 import { Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import MobileMenu from "./MobileMenu";
+import logo from '../../Images/logo.png'
+
 
 const Container = styled.div`
 	display: flex;
@@ -26,13 +28,15 @@ const Menu = styled.div`
 const Item = styled.div`
 	cursor: pointer;
 `;
-function MobileNavbar() {
+function MobileNavbar({ navigate }) {
 	const [open, setOpen] = useState(false);
 	return (
 		<Container>
 			<Menu>
 				<Item>
-					<Typography variant="p">Logo</Typography>
+				<img src={logo} alt='logo' style={{ width: "150px", height:"50px"}} onClick={() => {
+							navigate("/");
+						}} />
 				</Item>
 			</Menu>
 
@@ -44,7 +48,7 @@ function MobileNavbar() {
 					}}
 				/>
 			</Menu>
-			{open ? <MobileMenu open={open} setOpen={setOpen} /> : null}
+			{open ? <MobileMenu open={open} setOpen={setOpen} navigate={navigate} /> : null}
 		</Container>
 	);
 }

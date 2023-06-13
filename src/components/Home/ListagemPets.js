@@ -67,10 +67,14 @@ const ListagemPets = () => {
 					item
 					xs={12}
 					md={6}
-					style={{
+					sx={{
 						display: "flex",
 						justifyContent: "flex-end",
 						alignItems: "flex-end",
+						"@media (max-width: 600px)": {
+							justifyContent: "center",
+							alignItems: "center",
+						},
 					}}
 				>
 					<img src={dog} alt="Dog" width="350px" height="350px" />

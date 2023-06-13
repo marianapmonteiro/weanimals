@@ -6,9 +6,9 @@ import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 
-const Container = styled.ul`
+const Container = styled.div`
 	width: 100%;
-	height: 100vh;
+
 `;
 
 const UlStyled = styled.ul`
@@ -84,6 +84,9 @@ function Categorias({ Racas, Especies, Category }) {
 						sx={{
 							m: 1,
 							width: "20%",
+							"@media (max-width: 600px)": {
+								width: "30%",
+							},
 						}}
 						InputProps={{
 							endAdornment: (
@@ -145,6 +148,9 @@ function Categorias({ Racas, Especies, Category }) {
 						sx={{
 							m: 1,
 							width: "20%",
+							"@media (max-width: 600px)": {
+								width: "30%",
+							},
 						}}
 						InputProps={{
 							endAdornment: (

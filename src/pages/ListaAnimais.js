@@ -127,11 +127,16 @@ const ListaAnimais = () => {
 
 	return (
 		<Container
-			maxWidth="xl"
-			style={{
+			maxWidth="lg"
+			sx={{
 				display: "flex",
+				gap: '1em',
 				height: "100%",
-				marginTop: "2em",
+				marginTop: "5em",
+				"@media (max-width: 600px)": {
+					flexDirection: 'column',
+					marginTop: "2em",
+				},
 			}}
 		>
 			<TabsMenu

@@ -40,7 +40,7 @@ function App() {
 				<Navbar navigate={navigate} />
 			)}
 
-			<div style={{ paddingBottom: "100px", position: "relative" }}>
+			<div style={{ paddingBottom: "100px", position: "relative", flexGrow: 1 }}>
 				<RoutesApp />
 			</div>
 			<Footer />

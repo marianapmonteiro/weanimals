@@ -9,6 +9,7 @@ import CuidadosAnimais from "../components/Home/CuidadosAnimais";
 import Adocao from "../components/Home/Adocao";
 import AjudeComunidade from "../components/Home/AjudeComunidade";
 import { useNavigate } from "react-router-dom";
+import logo from '../Images/WeAnimalsLogo.png'
 
 const Circle = styled.div`
 	width: 60vh;
@@ -23,34 +24,36 @@ const Circle = styled.div`
 	}
 	@media (min-width: 1736px) {
 		width: 30vw;
-		height: 50vh;
+		height: 60vh;
+	},
+}}
+`;
+
+const Img = styled.img`
+	width: 250px;
+	height: 250px;
+	@media (max-width: ${theme.breakpoints.values.sm}px) {
+		width: 160px;
+		height: 160px;
+	}
+	@media (min-width: 1736px) {
+		width: 350px;
+		height: 350px;
 	},
 }}
 `;
 
 function Home() {
-	const [isMedium, setIsMedium] = useState(window.innerWidth <= 1919);
 	const navigate = useNavigate();
-	useEffect(() => {
-		const handleResize = () => {
-			setIsMedium(window.innerWidth <= 1919);
-		};
-
-		window.addEventListener("resize", handleResize);
-
-		return () => {
-			window.removeEventListener("resize", handleResize);
-		};
-	}, []);
 
 	return (
 		<>
 			<Container
-				maxWidth={isMedium ? "lg" : "xl"}
+				maxWidth='lg'
 				sx={{
 					height: "100%",
 					width: "100%",
-					paddingTop: "5%",
+					// paddingTop: "5%",
 					display: "flex",
 					flexDirection: "column",
 					justifyContent: "center",
@@ -58,8 +61,8 @@ function Home() {
 					"@media (max-width: 600px)": {
 						paddingTop: "0",
 					},
-					"@media (min-width: 1735px)": {
-						paddingTop: "10%",
+					"@media screen and (min-width: 1200px) and (max-width: 1790px)": {
+						paddingTop: "5%",
 					},
 				}}
 			>
@@ -87,9 +90,10 @@ function Home() {
 								},
 							}}
 						>
-							<Typography variant="h2" style={{ fontWeight: "bold" }}>
+							{/* <Typography variant="h2" style={{ fontWeight: "bold" }}>
 								WE ANIMALS
-							</Typography>
+							</Typography> */}
+							<Img src={logo} alt="logo" />
 							<Typography variant="body1">
 								Somos uma comunidade apaixonada por bichinhos! Venha se unir a
 								gente! Conte como é sua rotina, suas características e seus
@@ -98,7 +102,12 @@ function Home() {
 							</Typography>
 						</Box>
 					</Grid>
-					<Grid item md={6} sx={12}>
+					<Grid item md={6} xs={12} sx={{
+						"@media (min-width: 1735px)": {
+							marginTop: "5%",
+
+						},
+					}}>
 						<Box
 							sx={{
 								display: "flex",
@@ -143,7 +152,6 @@ function Home() {
 				<ListagemPets />
 				<CuidadosAnimais />
 				<Adocao />
-
 				<AjudeComunidade />
 				<Posts />
 			</Container>
