@@ -1,9 +1,12 @@
-import React from "react";
-import { Typography, Box, TextField, Button, Divider } from "@mui/material";
+import React, { useState, useContext } from "react";
+import { Typography, Box, TextField, Divider, InputAdornment, IconButton } from "@mui/material";
 import styled from "@emotion/styled";
 import theme from "../theme/theme";
 import StyledButton from "../components/Button";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const Container = styled.div`
 	width: 100%;
@@ -17,7 +20,21 @@ const Container = styled.div`
 `;
 
 function Login() {
+	const { loginRequest } = useContext(AuthContext)
 	const navigate = useNavigate();
+	const [email, setEmail] = useState('')
+	const [password, setPassword] = useState('');
+	const [helpText, setHelpText] = useState(false)
+	const [error, setError] = useState('')
+	const [showPassword, setShowPassword] = useState(false);
+
+
+	const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+	const handleLogin = async () => {
+		loginRequest(email, password, setHelpText, setError)
+	}
+
 	return (
 		<Container>
 			<Box
@@ -53,14 +70,28 @@ function Login() {
 					label="E-mail"
 					variant="outlined"
 					fullWidth
+					onChange={(e) => { setEmail(e.target.value) }}
 				/>
 				<TextField
-					id="outlined-basic"
-					label="Senha"
-					variant="outlined"
+					id="outlined-adornment-password"
 					fullWidth
+					type={showPassword ? 'text' : 'password'}
+					endAdornment={
+						<InputAdornment position="end">
+							<IconButton
+								aria-label="toggle password visibility"
+								onClick={handleClickShowPassword}
+								edge="end"
+							>
+								{showPassword ? <VisibilityOff /> : <Visibility />}
+							</IconButton>
+						</InputAdornment>
+					}
+					label="Senha"
+					onChange={(e) => { setPassword(e.target.value) }}
 				/>
-				<StyledButton variant="contained" text="Login" width="100%" />
+				{helpText ? <Typography variant="body1" style={{ color: 'red' }}>{error}</Typography> : null}
+				<StyledButton variant="contained" text="Login" width="100%" onClick={() => { handleLogin() }} />
 				<Divider
 					orientation="horizontal"
 					flexItem

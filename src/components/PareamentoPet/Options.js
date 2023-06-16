@@ -9,12 +9,13 @@ import {
 import styled from "@emotion/styled";
 
 const Image = styled.img`
-	width: 250px;
-	height: 250px;
+	width: 350px;
+	height: 350px;
 	margin-right: 10px;
 	background-size: cover;
 	background-position: center;
 	object-fit: cover;
+	border-radius: 8px;
 `;
 
 const Container = styled.div`

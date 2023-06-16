@@ -1,5 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { useLocation } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { AddEspecie } from "../../requests/Especies";
+import axios from 'axios'
+import Swal from "sweetalert2";
 import {
 	Typography,
 	Container,
@@ -14,9 +18,7 @@ import dog from "../../Images/download.jpg";
 import theme from "../../theme/theme";
 import AddIcon from "@mui/icons-material/Add";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { AddEspecie } from "../../requests/Especies";
-import axios from "axios";
-import Swal from "sweetalert2";
+
 
 const Box = styled.div`
 	width: 100%;
@@ -78,6 +80,7 @@ const BoxBtn = styled.div`
 `;
 const Thumbs = styled.div`
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
 	gap: 1em;
@@ -91,21 +94,10 @@ const Imgs = styled.img`
 `;
 
 function AdicionarEspecie() {
-	const [isMedium, setIsMedium] = useState(window.innerWidth <= 1919);
+	const { user } = useContext(AuthContext);
+	const author = user.name;
 	const location = useLocation();
 	const category = location.state.category;
-
-	useEffect(() => {
-		const handleResize = () => {
-			setIsMedium(window.innerWidth <= 1919);
-		};
-
-		window.addEventListener("resize", handleResize);
-
-		return () => {
-			window.removeEventListener("resize", handleResize);
-		};
-	}, []);
 
 	const exemplos = ["Noturno", "Sociavel", "Territorialista"];
 	const [nome, setNome] = useState("");
@@ -114,12 +106,12 @@ function AdicionarEspecie() {
 	const [etiqueta, setEtiqueta] = useState("");
 	const [etiquetas, setEtiquetas] = useState([]);
 	const [loading, setLoading] = useState(false);
+	const [loadingImgs, setLoadingImgs] = useState(false);
 	const [helpText, setHelpText] = useState(false);
+	const [errorLabel, setErrorLabel] = useState("");
 
 	const handleEtiquetas = () => {
 		setEtiquetas((prevValor) => [...prevValor, etiqueta]);
-		console.log("chama etiqueta funcation");
-		console.log("etiqueta", etiquetas);
 	};
 
 	const handleDeleteEtiqueta = (index) => {
@@ -129,9 +121,10 @@ function AdicionarEspecie() {
 			return novoArray;
 		});
 	};
-	const handleImage = (e) => {
+	const handleImage = async (e) => {
 		const newImages = Array.from(e.target.files);
 		setFiles((prevImages) => [...prevImages, ...newImages]);
+
 	};
 
 	const handleDeleteImage = (index) => {
@@ -148,39 +141,30 @@ function AdicionarEspecie() {
 			nome === "" ||
 			descricao === "" ||
 			files.length === 0 ||
-			etiquetas.length === 0
+			etiquetas.length === 0 ||
+			files.length > 5
 		) {
 			setHelpText(true);
-		} else {
+			setErrorLabel("Preencha todos os campos com os valores corretos")
+		}
+		else {
 			setHelpText(false);
 			try {
 				const formData = new FormData();
-				const key = "8b39fd8e05217d4a8bc071ccfe514541";
 
-				for (let i = 0; i < files.length; i++) {
-					formData.append("image", files[i]);
-				}
-
-				const imageUrls = [];
-
-				for (let i = 0; i < files.length; i++) {
-					const response = await axios({
-						method: "post",
-						url: `https://api.imgbb.com/1/upload?key=${key}`,
-						data: formData,
-					});
-					const imageUrl = response.data.data.url;
-					imageUrls.push(imageUrl);
-				}
-
-				await AddEspecie(nome, descricao, imageUrls, etiquetas, category);
-				Swal.fire({
-					position: "center",
-					icon: "success",
-					title: "Espécie adicionada com sucesso!",
-					showConfirmButton: false,
-					timer: 1500,
+				formData.append("nome", nome);
+				formData.append("descricao", descricao);
+				files.forEach((file) => {
+					formData.append("imagens", file);
 				});
+				etiquetas.forEach((value) => {
+					formData.append('etiquetas[]', value);
+				});
+				formData.append("category", category);
+				formData.append("author", author);
+
+				await AddEspecie(formData);
+
 			} catch (error) {
 				console.error("Error uploading images:", error);
 			}
@@ -189,7 +173,7 @@ function AdicionarEspecie() {
 	};
 
 	return (
-		<Container style={{ marginTop: "2em" }} maxWidth={isMedium ? "lg" : "xl"}>
+		<Container style={{ marginTop: "2em" }} maxWidth="lg">
 			<Box>
 				<Title>
 					<Typography variant="h4">Adicionar Bichinho (Espécie)</Typography>
@@ -244,6 +228,7 @@ function AdicionarEspecie() {
 
 				<BoxForm>
 					<Typography>Imagens</Typography>
+					<Typography style={{ color: 'gray', fontSize: '12px' }}> *Max 5</Typography>
 					<Button
 						variant="contained"
 						component="label"
@@ -257,7 +242,8 @@ function AdicionarEspecie() {
 						}}
 					>
 						Upload File
-						<input type="file" hidden onChange={handleImage} multiple />
+						<input type="file" name="images" hidden onChange={handleImage} multiple disabled={loadingImgs}
+						/>
 					</Button>
 					<Thumbs>
 						{Array.isArray(files) &&
@@ -345,12 +331,12 @@ function AdicionarEspecie() {
 				{helpText ? (
 					<BoxForm>
 						<Typography variant="body1" style={{ color: "red" }}>
-							Preencha todos os campos!
+							{errorLabel}
 						</Typography>
 					</BoxForm>
 				) : null}
 				{loading ? (
-					<CircularProgress />
+					<BoxBtn><CircularProgress /></BoxBtn>
 				) : (
 					<BoxBtn>
 						{" "}

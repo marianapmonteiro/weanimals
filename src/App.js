@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { ThemeProvider, CssBaseline, GlobalStyles } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useRoutes } from "react-router-dom";
 import theme from "./theme/theme";
-import RoutesApp from "./RoutesApp";
+import RoutesApp from "./routes/RoutesApp";
 import Navbar from "./components/Navbar/Navbar";
 import MobileNavbar from "./components/Navbar/MobileNavbar";
 import Footer from "./components/Footer";
+import { CookiesProvider, Cookies } from 'react-cookie';
+import { AuthProvider } from "./context/AuthContext";
+
 
 function App() {
 	const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -23,28 +26,33 @@ function App() {
 	}, []);
 
 	return (
-		<ThemeProvider theme={theme}>
-			<CssBaseline />
-			<GlobalStyles
-				styles={{
-					body: {
-						minHeight: "100vh",
-						position: "relative",
-						backgroundColor: theme.palette.background.default,
-					},
-				}}
-			/>
-			{isMobile ? (
-				<MobileNavbar navigate={navigate} />
-			) : (
-				<Navbar navigate={navigate} />
-			)}
+		<CookiesProvider>
+			<AuthProvider>
+				<ThemeProvider theme={theme}>
+					<CssBaseline />
+					<GlobalStyles
+						styles={{
+							body: {
+								minHeight: "100vh",
+								position: "relative",
+								backgroundColor: theme.palette.background.default,
+							},
+						}}
+					/>
+					{isMobile ? (
+						<MobileNavbar navigate={navigate} />
+					) : (
+						<Navbar navigate={navigate} />
+					)}
 
-			<div style={{ paddingBottom: "100px", position: "relative", flexGrow: 1 }}>
-				<RoutesApp />
-			</div>
-			<Footer />
-		</ThemeProvider>
+					<div style={{ paddingBottom: "100px", position: "relative", flexGrow: 1 }}>
+						<RoutesApp />
+					</div>
+					<Footer />
+				</ThemeProvider>
+			</AuthProvider>
+		</CookiesProvider>
+
 	);
 }
 

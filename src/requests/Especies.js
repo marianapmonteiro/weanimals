@@ -1,28 +1,40 @@
 import api from "../utils/api";
+import Swal from "sweetalert2";
 
 export const AddEspecie = async (
-	nome,
-	descricao,
-	imagens,
-	etiquetas,
-	category
+	formData
 ) => {
-	let data = {
-		nome: nome,
-		descricao: descricao,
-		imagens: imagens,
-		etiquetas: etiquetas,
-		category: category,
-	};
-	console.log("data:", data);
-
 	await api
-		.post(`/app/addespecie`, data)
+		.post(`/app/addespecie`, formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			}
+		})
 		.then((res) => {
-			return res.message;
+			if (res.data.message) {
+				Swal.fire({
+					position: "center",
+					icon: "success",
+					title: res.data.message,
+					showConfirmButton: false,
+					timer: 1500,
+				});
+				return res.data.message;
+			}
+			if (res.data.error) {
+				Swal.fire({
+					position: "center",
+					icon: "error",
+					title: res.data.error,
+					showConfirmButton: true,
+				});
+				return res.data.error;
+			}
+
 		})
 		.catch((err) => {
 			console.log(err);
+
 		});
 };
 

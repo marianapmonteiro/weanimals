@@ -2,16 +2,12 @@ import React, { useState, useEffect } from "react";
 import {
 	Divider,
 	Typography,
-	TextField,
-	InputAdornment,
 	Container,
+	Box
 } from "@mui/material";
 import styled from "@emotion/styled";
 import theme from "../theme/theme";
 import { useLocation, useNavigate } from "react-router-dom";
-import gato from "../Images/bunny.jpg";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Carousel from "react-gallery-carousel";
 import "react-gallery-carousel/dist/index.css";
 
@@ -78,91 +74,86 @@ const Alert = styled.div`
 `;
 
 function Especie() {
-	const [isMedium, setIsMedium] = useState(window.innerWidth <= 1919);
 	const location = useLocation();
-	const { nome, descricao, etiquetas, racas, imagens } = location.state;
+	const { nome, descricao, etiquetas, racas, imagens, author } = location.state;
 
 	const images = imagens.map((item) => ({
-		src: item,
+		src: `http://localhost:3001/uploads/${item}`,
 	}));
-	console.log("imgs", imagens);
-	useEffect(() => {
-		const handleResize = () => {
-			setIsMedium(window.innerWidth <= 1919);
-		};
-
-		window.addEventListener("resize", handleResize);
-
-		return () => {
-			window.removeEventListener("resize", handleResize);
-		};
-	}, []);
 
 	return (
-		<MainContainer>
-			<CarouselBox>
-				<Carousel images={images} />
-			</CarouselBox>
-			<Container maxWidth={isMedium ? "md" : "xl"}>
-				<BoxFlex style={{ marginTop: "1em" }}>
-					<Typography variant="h5" style={{ fontWeight: "bold" }}>
-						Nome:
-					</Typography>
-					<Typography variant="body1">{nome}</Typography>
-				</BoxFlex>
-				<BoxFlex>
-					<Typography variant="h5" mt={0} style={{ fontWeight: "bold" }}>
-						Descricao:
-					</Typography>
-					<Typography
-						alignItems="flex-end"
-						mt={0}
+		<Container maxWidth="lg">
+			<MainContainer>
+				<CarouselBox>
+					<Carousel images={images} />
+				</CarouselBox>
+				<Container maxWidth="lg">
+					<BoxFlex style={{ marginTop: "1em" }}>
+						<Typography variant="h5" style={{ fontWeight: "bold" }}>
+							Nome:
+						</Typography>
+						<Typography variant="body1">{nome}</Typography>
+					</BoxFlex>
+					<BoxFlex>
+						<Typography variant="h5" mt={0} style={{ fontWeight: "bold" }}>
+							Descricao:
+						</Typography>
+						<Typography
+							alignItems="flex-end"
+							mt={0}
+							style={{
+								wordBreak: "break-word",
+							}}
+						>
+							{descricao}
+						</Typography>
+					</BoxFlex>
+					<BoxFlex>
+						<Typography variant="h5" style={{ fontWeight: "bold" }}>
+							Etiquetas:
+						</Typography>
+					</BoxFlex>
+					<div
 						style={{
-							wordBreak: "break-word",
+							display: "flex",
+							gap: "1em",
+							marginTop: "2em",
+							flexWrap: "wrap",
 						}}
 					>
-						{descricao}
-					</Typography>
-				</BoxFlex>
-				<BoxFlex>
-					<Typography variant="h5" style={{ fontWeight: "bold" }}>
-						Etiquetas:
-					</Typography>
-				</BoxFlex>
-				<div
-					style={{
-						display: "flex",
-						gap: "1em",
-						marginTop: "2em",
-						flexWrap: "wrap",
-					}}
-				>
-					{etiquetas.map((item) => (
-						<Alert key={item}>
-							<Typography
-								variant="body1"
-								style={{ color: "white", textAlign: "end" }}
-							>
-								{item}
-							</Typography>
-						</Alert>
-					))}
-				</div>
-				<BoxFlex>
-					<Typography variant="h5" style={{ fontWeight: "bold" }}>
-						Raças
-					</Typography>
-				</BoxFlex>
-				<BoxFlex style={{ marginTop: "1em" }}>
-					<Typography style={{ color: theme.palette.secondary.dark }}>
-						raça1
-					</Typography>
-					<Typography style={{ color: theme.palette.secondary.dark }}>
-						raça2
-					</Typography>
-				</BoxFlex>
-			</Container>
-		</MainContainer>
+						{etiquetas.map((item) => (
+							<Alert key={item}>
+								<Typography
+									variant="body1"
+									style={{ color: "white", textAlign: "end" }}
+								>
+									{item}
+								</Typography>
+							</Alert>
+						))}
+					</div>
+					<BoxFlex>
+						<Typography variant="h5" style={{ fontWeight: "bold" }}>
+							Raças
+						</Typography>
+					</BoxFlex>
+					<BoxFlex style={{ marginTop: "1em" }}>
+						<Typography style={{ color: theme.palette.secondary.dark }}>
+							raça1
+						</Typography>
+						<Typography style={{ color: theme.palette.secondary.dark }}>
+							raça2
+						</Typography>
+					</BoxFlex>
+					<Box style={{ marginTop: '2em', display: 'flex', flexDirection: "column", gap: '2em', width: '100%' }}>
+						<Divider />
+						<Typography >
+							Publicado por: {author}
+						</Typography>
+					</Box>
+				</Container>
+			</MainContainer>
+		</Container>
 	);
 }
 

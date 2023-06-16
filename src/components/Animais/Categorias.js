@@ -71,8 +71,6 @@ const TitleandSearchBox = styled.div`
 
 function Categorias({ Racas, Especies, Category }) {
 	const navigate = useNavigate();
-	console.log("racas:", Racas);
-	console.log("caregoty", Category);
 	return (
 		<Container>
 			<BoxCategory>
@@ -110,6 +108,7 @@ function Categorias({ Racas, Especies, Category }) {
 											etiquetas: item.etiquetas,
 											imagens: item.imagens,
 											racas: item.racas,
+											author: item.authorName
 										},
 									});
 								}}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import theme from "../../theme/theme";
 import styled from "@emotion/styled";
 import { Typography, Select, MenuItem, Container } from "@mui/material";
@@ -6,6 +6,7 @@ import StyledButton from "../Button/index";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import logo from '../../Images/logo.png'
+import { AuthContext } from "../../context/AuthContext";
 
 const MainContainer = styled.div`
 	display: flex;
@@ -29,7 +30,7 @@ const Item = styled.div`
 	cursor: pointer;
 `;
 function Navbar({ navigate }) {
-	const [user, setUser] = useState("aaa");
+	const { logoutRequest, user } = useContext(AuthContext);
 	return (
 		<Container maxWidth="lg">
 			<MainContainer>
@@ -99,7 +100,7 @@ function Navbar({ navigate }) {
 													navigate("/aboutus");
 												}}
 											>
-												Bem vindo, {user}
+												Bem vindo, {user.name}
 											</Typography>
 										</div>
 									);
@@ -108,8 +109,7 @@ function Navbar({ navigate }) {
 								<MenuItem
 									style={{ gap: "0.5em" }}
 									onClick={() => {
-										navigate("/login");
-										setUser("");
+										logoutRequest()
 									}}
 								>
 									<LogoutIcon /> <Typography>Sair</Typography>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Typography } from "@mui/material";
 import styled from "@emotion/styled";
 import Options from "./Options";
@@ -22,7 +22,9 @@ const BoxBtn = styled.div`
 	justify-content: center;
 `;
 
-function Layout({ title, options, images, setValue, value, setLoading }) {
+function Layout({ title, options, images, setValue, value, setLoading, loading, handleNext }) {
+
+
 	return (
 		<Box>
 			<Typography variant="h4">{title}</Typography>
@@ -32,9 +34,8 @@ function Layout({ title, options, images, setValue, value, setLoading }) {
 					variant="contained"
 					style={{ color: "white", width: "50%", borderRadius: "8px" }}
 					onClick={() => {
-						setLoading(true);
-						setValue(value);
-						setLoading(false);
+						handleNext()
+						console.log('value', value)
 					}}
 				>
 					Próximo

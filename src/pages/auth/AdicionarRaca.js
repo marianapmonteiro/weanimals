@@ -105,19 +105,6 @@ function AdicionarRaca() {
 	const category = location.state.category;
 
 	console.log("especies:", especies);
-	const [isMedium, setIsMedium] = useState(window.innerWidth <= 1919);
-
-	useEffect(() => {
-		const handleResize = () => {
-			setIsMedium(window.innerWidth <= 1919);
-		};
-
-		window.addEventListener("resize", handleResize);
-
-		return () => {
-			window.removeEventListener("resize", handleResize);
-		};
-	}, []);
 
 	const exemplos = ["Noturno", "Sociavel", "Territorialista"];
 
@@ -197,7 +184,7 @@ function AdicionarRaca() {
 	};
 
 	return (
-		<Container style={{ marginTop: "2em" }} maxWidth={isMedium ? "lg" : "xl"}>
+		<Container style={{ marginTop: "2em" }} maxWidth="lg">
 			<Box>
 				<Title>
 					<Typography variant="h4">Adicionar Bichinho (Raça)</Typography>

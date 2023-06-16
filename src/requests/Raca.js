@@ -5,7 +5,8 @@ export const AddRaca = async (
 	nome,
 	descricao,
 	imagens,
-	cuidadosEspecificos
+	cuidadosEspecificos,
+	author
 ) => {
 	let data = {
 		especie: especie,
@@ -13,13 +14,14 @@ export const AddRaca = async (
 		descricao: descricao,
 		imagens: imagens,
 		cuidadosEspecificos: cuidadosEspecificos,
+		author: author
 	};
 	console.log("data:", data);
 
 	await api
 		.post(`/app/addraca`, data)
 		.then((res) => {
-			return res.message;
+			return res.data.message;
 		})
 		.catch((err) => {
 			console.log(err);
