@@ -2,8 +2,6 @@ import React, { useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { AddEspecie } from "../../requests/Especies";
-import axios from 'axios'
-import Swal from "sweetalert2";
 import {
 	Typography,
 	Container,
@@ -14,11 +12,11 @@ import {
 	IconButton,
 } from "@mui/material";
 import styled from "@emotion/styled";
-import dog from "../../Images/download.jpg";
+import imagem from "../../Images/addImagem.jpg";
 import theme from "../../theme/theme";
 import AddIcon from "@mui/icons-material/Add";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-
+import TextEditor from "../../components/TextEditor";
 
 const Box = styled.div`
 	width: 100%;
@@ -94,11 +92,12 @@ const Imgs = styled.img`
 `;
 
 function AdicionarEspecie() {
-	const { user } = useContext(AuthContext);
-	const author = user.name;
+	const { cookies } = useContext(AuthContext);
+	const author = cookies.UserData.name;
+	const token = cookies.WeAnimals;
 	const location = useLocation();
 	const category = location.state.category;
-
+	console.log('token::', token)
 	const exemplos = ["Noturno", "Sociavel", "Territorialista"];
 	const [nome, setNome] = useState("");
 	const [descricao, setDescricao] = useState("");
@@ -162,8 +161,7 @@ function AdicionarEspecie() {
 				});
 				formData.append("category", category);
 				formData.append("author", author);
-
-				await AddEspecie(formData);
+				await AddEspecie(formData, token);
 
 			} catch (error) {
 				console.error("Error uploading images:", error);
@@ -181,12 +179,11 @@ function AdicionarEspecie() {
 				</Title>
 				<BoxInformacoes>
 					<img
-						src={dog}
+						src={imagem}
 						alt="dog"
 						width="100px"
 						height="100px"
-						style={{ borderRadius: "1000px" }}
-					/>
+						style={{ borderRadius: "1000px", objectFit: "cover" }} />
 					<BoxInfo>
 						<Typography
 							variant="body1"
@@ -215,58 +212,9 @@ function AdicionarEspecie() {
 
 				<BoxForm>
 					<Typography>Descrição</Typography>
-					<TextField
-						style={{ width: "50%" }}
-						rows={4}
-						multiline
-						margin="dense"
-						onChange={(e) => {
-							setDescricao(e.target.value);
-						}}
-					/>
+					<TextEditor value={descricao} onChange={setDescricao} width="50%" />
 				</BoxForm>
 
-				<BoxForm>
-					<Typography>Imagens</Typography>
-					<Typography style={{ color: 'gray', fontSize: '12px' }}> *Max 5</Typography>
-					<Button
-						variant="contained"
-						component="label"
-						sx={{
-							color: "white",
-							width: "20%",
-							marginTop: "2em",
-							"@media (max-width: 600px)": {
-								width: "40%",
-							},
-						}}
-					>
-						Upload File
-						<input type="file" name="images" hidden onChange={handleImage} multiple disabled={loadingImgs}
-						/>
-					</Button>
-					<Thumbs>
-						{Array.isArray(files) &&
-							files.map((item, index) => (
-								<div style={{ position: "relative" }} key={index}>
-									<Imgs src={URL.createObjectURL(item)} alt="upload" />
-									<IconButton
-										aria-label="delete"
-										size="small"
-										style={{
-											position: "absolute",
-											zIndex: 1,
-											top: -15,
-											right: -10,
-										}}
-										onClick={() => handleDeleteImage(index)}
-									>
-										<HighlightOffIcon style={{ color: "red" }} />
-									</IconButton>
-								</div>
-							))}
-					</Thumbs>
-				</BoxForm>
 
 				<BoxForm>
 					<Typography>Etiquetas</Typography>
@@ -328,6 +276,48 @@ function AdicionarEspecie() {
 						</>
 					)}
 				</BoxExemplos>
+				<BoxForm>
+					<Typography>Imagens</Typography>
+					<Typography style={{ color: 'gray', fontSize: '12px' }}> *Max 5</Typography>
+					<Button
+						variant="contained"
+						component="label"
+						sx={{
+							color: "white",
+							width: "20%",
+							marginTop: "2em",
+							"@media (max-width: 600px)": {
+								width: "40%",
+							},
+						}}
+					>
+						Upload File
+						<input type="file" name="images" hidden onChange={handleImage} multiple disabled={loadingImgs}
+						/>
+					</Button>
+					<Thumbs>
+						{Array.isArray(files) &&
+							files.map((item, index) => (
+								<div style={{ position: "relative" }} key={index}>
+									<Imgs src={URL.createObjectURL(item)} alt="upload" />
+									<IconButton
+										aria-label="delete"
+										size="small"
+										style={{
+											position: "absolute",
+											zIndex: 1,
+											top: -15,
+											right: -10,
+										}}
+										onClick={() => handleDeleteImage(index)}
+									>
+										<HighlightOffIcon style={{ color: "red" }} />
+									</IconButton>
+								</div>
+							))}
+					</Thumbs>
+				</BoxForm>
+
 				{helpText ? (
 					<BoxForm>
 						<Typography variant="body1" style={{ color: "red" }}>

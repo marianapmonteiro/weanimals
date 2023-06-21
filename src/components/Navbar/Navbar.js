@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import theme from "../../theme/theme";
 import styled from "@emotion/styled";
 import { Typography, Select, MenuItem, Container } from "@mui/material";
@@ -30,7 +30,15 @@ const Item = styled.div`
 	cursor: pointer;
 `;
 function Navbar({ navigate }) {
-	const { logoutRequest, user } = useContext(AuthContext);
+	const { logoutRequest, cookies } = useContext(AuthContext);
+	const [user, setUser] = useState(cookies.UserData);
+	console.log("usernow", user)
+
+	useEffect(() => {
+		setUser(cookies.UserData);
+		console.log("user:::", user)
+	}, [cookies.UserData, user])
+
 	return (
 		<Container maxWidth="lg">
 			<MainContainer>
@@ -83,7 +91,7 @@ function Navbar({ navigate }) {
 					</Item>
 
 					<Item>
-						{user !== "" ? (
+						{user !== undefined ? (
 							<Select
 								displayEmpty
 								variant="standard"
@@ -100,7 +108,7 @@ function Navbar({ navigate }) {
 													navigate("/aboutus");
 												}}
 											>
-												Bem vindo, {user.name}
+												Bem vindo(a) {user.name}
 											</Typography>
 										</div>
 									);
@@ -109,11 +117,20 @@ function Navbar({ navigate }) {
 								<MenuItem
 									style={{ gap: "0.5em" }}
 									onClick={() => {
+										navigate('/perfil')
+									}}
+								>
+									<AccountCircleIcon /> <Typography>Perfil</Typography>
+								</MenuItem>
+								<MenuItem
+									style={{ gap: "0.5em" }}
+									onClick={() => {
 										logoutRequest()
 									}}
 								>
 									<LogoutIcon /> <Typography>Sair</Typography>
 								</MenuItem>
+
 							</Select>
 						) : (
 							<StyledButton

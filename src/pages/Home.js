@@ -10,11 +10,14 @@ import Adocao from "../components/Home/Adocao";
 import AjudeComunidade from "../components/Home/AjudeComunidade";
 import { useNavigate } from "react-router-dom";
 import logo from '../Images/WeAnimalsLogo.png'
+import image from '../Images/homeGif.gif'
 
 const Circle = styled.div`
 	width: 60vh;
 	height: 60vh;
 	display: flex;
+	background-image: url(${image});
+	background-size: cover;
 	background-color: gray;
 	border-radius: 50%;
 	margin-bottom: 50px;

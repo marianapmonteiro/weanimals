@@ -1,15 +1,17 @@
 import React from 'react';
 import styled from "@emotion/styled";
-import { Divider, Typography, TextField, InputAdornment, Container, Box, Grid, Button } from "@mui/material";
-import HeroImg from '../Images/HeroDog.png';
+import { useNavigate } from 'react-router-dom';
+import { Typography, Container, Box, Grid } from "@mui/material";
+import StyledButton from '../components/Button';
 import theme from '../theme/theme';
+import HeroImg from '../Images/heroImg.jpg';
 import bunnyCircle from '../Images/bunnycircle.png'
 import bunnybg from '../Images/bunnybg.png'
 import paws from '../Images/paws.png'
 import passaro from '../Images/passaro.jpg'
 import cachorro from '../Images/dog2.jpg'
 import gato from '../Images/gatinho.jpg'
-import StyledButton from '../components/Button';
+
 
 const MainContainer = styled.div`
   display: flex;
@@ -111,13 +113,14 @@ const Paw = styled.img`
 `;
 
 export default function AboutUs() {
+	const navigate = useNavigate()
 	return (
 		<MainContainer>
 			<BoxHero>
 				<Container maxWidth="lg">
 					<Title>
 						<Typography variant="h2" style={{ fontWeight: "bold" }}>Sobre nós</Typography>
-						<Typography variant="body1">Conheça mais sobre a nossa comunidade!</Typography>
+						<Typography variant="body1" style={{ color: '#252247' }}>Conheça mais sobre a nossa comunidade!</Typography>
 					</Title>
 				</Container>
 				<Hero />
@@ -156,7 +159,7 @@ export default function AboutUs() {
 						<LastImgs src={cachorro} alt="Cachorro" />
 						<LastImgs src={gato} alt="Gato" />
 					</BoxImgs>
-					<StyledButton text="Procure agora o seu companheiro ideal!" style={{ fontWeight: "bold", paddingTop: '10px', paddingBottom: '10px' }} />
+					<Box style={{ marginTop: "2em" }}><StyledButton text="Procure agora o seu companheiro ideal!" style={{ fontWeight: "bold", paddingTop: '10px', paddingBottom: '10px', }} onClick={() => { navigate("/animais") }} /></Box>
 				</Box>
 			</Container>
 		</MainContainer>

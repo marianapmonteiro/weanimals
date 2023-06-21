@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { AuthContext } from '../../context/AuthContext'
 import { Drawer, Box, Typography, Divider, Button } from "@mui/material";
-import { ChevronRight } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
 import StyledButton from "../Button/index";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import logo from '../../Images/logo.png'
+import theme from "../../theme/theme";
 
 const Menu = styled.div`
 	width: 250px;
@@ -39,7 +40,9 @@ const MobileMenu = ({ open, setOpen, navigate }) => {
 	const handleDrawerClose = () => {
 		setOpen(false);
 	};
-	const [user, setUser] = useState("aaa");
+	const { logoutRequest, cookies } = useContext(AuthContext);
+	const [user, setUser] = useState(cookies.UserData)
+
 	return (
 		<>
 			<Drawer
@@ -47,14 +50,13 @@ const MobileMenu = ({ open, setOpen, navigate }) => {
 				open={open}
 				onClose={handleDrawerClose}
 				variant="temporary"
+				PaperProps={{
+					sx: {
+						backgroundColor: theme.palette.background.default,
+					}
+				}}
 			>
-				<Box
-					style={{
-						backgroundImage:
-							"linear-gradient(to bottom, #a39ce7, #8f88d0, #7b74b9, #6761a3, #544e8d)",
-						// borderBottomRightRadius: "150px",
-					}}
-				>
+				<Box>
 					<Icon>
 						{" "}
 						<CloseIcon
@@ -64,54 +66,75 @@ const MobileMenu = ({ open, setOpen, navigate }) => {
 							}}
 						/>
 					</Icon>
-
 					<Logo>
 						<img src={logo} alt='logo' style={{ width: "160px", height: "50px" }} onClick={() => {
 							navigate("/");
 						}} />
 					</Logo>
 				</Box>
-				<Menu>
-					{/* Place your content inside the drawer */}
-
+				<Menu style={{ backgroundColor: theme.palette.background.default }}>
 					<div>
-						<Button style={{ width: "100%" }}  onClick={() => {
+						<Button style={{ width: "100%" }} onClick={() => {
 							navigate("/animais");
+							handleDrawerClose()
 						}}>
 							<Typography color="#252247" style={{ fontWeight: "bold" }}>
 								Animais
 							</Typography>
 						</Button>
 					</div>
-					<div>
+					<div style={{ position: 'relative' }}>
 						<Button style={{ width: "100%" }}>
 							<Typography color="#252247" style={{ fontWeight: "bold" }}>
 								Adoção
 							</Typography>
+							<div
+								style={{
+									position: "absolute",
+									color: "red",
+									bottom: -20,
+									textAlign: "flex-start",
+									width: "100%",
+								}}
+							>
+								<p style={{ fontSize: "8px" }}>Em breve</p>
+							</div>
 						</Button>
+
 					</div>
 					<div>
 						<Button style={{ width: "100%" }}>
-							<Typography color="#252247" style={{ fontWeight: "bold" }}  onClick={() => {
-							navigate("/about");
-						}}>
+							<Typography color="#252247" style={{ fontWeight: "bold" }} onClick={() => {
+								navigate("/aboutus");
+								handleDrawerClose()
+							}}>
 								Quem Somos
 							</Typography>
 						</Button>
 					</div>
 					<Divider style={{ width: "100%" }} />
-					{user !== "" ? (
+					{user !== undefined ? (
 						<>
 							<div style={{ display: "flex", gap: "1em" }}>
 								<AccountCircleIcon />{" "}
 								<Typography style={{ textTransform: "none" }}>
-									Bem vindo, {user}
+									Bem vindo, {user.name}
 								</Typography>
 							</div>
 							<div
 								style={{ display: "flex", gap: "1em" }}
 								onClick={() => {
-									navigate("/login");
+									navigate('/perfil')
+									handleDrawerClose()
+								}}
+							>
+								<AccountCircleIcon /> <Typography style={{ textTransform: "none" }}>Perfil</Typography>
+							</div>
+							<div
+								style={{ display: "flex", gap: "1em" }}
+								onClick={() => {
+									logoutRequest()
+									handleDrawerClose()
 								}}
 							>
 								<LogoutIcon /> <Typography>Sair</Typography>
@@ -124,13 +147,13 @@ const MobileMenu = ({ open, setOpen, navigate }) => {
 								padding="30px"
 								onClick={() => {
 									navigate("/login");
-									setUser("");
+									handleDrawerClose()
 								}}
 							/>
 						</div>
 					)}
 				</Menu>
-			</Drawer>
+			</Drawer >
 		</>
 	);
 };

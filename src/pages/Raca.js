@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
 import {
-	Divider,
 	Typography,
-	TextField,
-	InputAdornment,
 	Container,
 } from "@mui/material";
 import styled from "@emotion/styled";
 import theme from "../theme/theme";
 import { useLocation, useNavigate } from "react-router-dom";
-import gato from "../Images/bunny.jpg";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Carousel from "react-gallery-carousel";
 import "react-gallery-carousel/dist/index.css";
 import { GetEspecies } from "../requests/Especies";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const MainContainer = styled.div`
 	width: 100%;
@@ -86,10 +82,12 @@ function Raca() {
 		location.state;
 	const [especies, setEspecies] = useState([]);
 	const [especieNome, setEspecieNome] = useState("");
+	console.log('especie:', especie)
 
-	const images = [900, 800, 700, 600, 500].map((size) => ({
-		src: `https://placedog.net/${size}/${size}`,
+	const images = imagens.map((item) => ({
+		src: `http://localhost:3001/uploads/racas/${item}`,
 	}));
+
 	useEffect(() => {
 		const fetchData = async () => {
 			await GetEspecies(setEspecies);
@@ -99,28 +97,25 @@ function Raca() {
 				}
 			});
 		};
-
 		fetchData();
 	}, []);
-
 	useEffect(() => {
-		const handleResize = () => {
-			setIsMedium(window.innerWidth <= 1919);
-		};
+		especies.forEach((item) => {
+			if (item._id === especie) {
+				setEspecieNome(item.nome);
+			}
+		});
+	}, [especies]);
 
-		window.addEventListener("resize", handleResize);
+	console.log('especie nome', especieNome)
 
-		return () => {
-			window.removeEventListener("resize", handleResize);
-		};
-	}, []);
 
 	return (
 		<MainContainer>
 			<CarouselBox>
 				<Carousel images={images} />
 			</CarouselBox>
-			<Container maxWidth={isMedium ? "md" : "xl"}>
+			<Container maxWidth="lg">
 				<BoxFlex style={{ marginTop: "1em" }}>
 					<Typography variant="h5" style={{ fontWeight: "bold" }}>
 						Nome:
@@ -135,18 +130,23 @@ function Raca() {
 						{especieNome}
 					</Typography>
 				</BoxFlex>
-				<BoxFlex>
+				<BoxFlex style={{ flexDirection: "column", alignItems: "flex-start" }}>
 					<Typography variant="h5" style={{ fontWeight: "bold" }}>
 						Descricao:
 					</Typography>
-					<Typography
+					{/* <Typography
 						mt={0}
 						style={{
 							wordBreak: "break-word",
 						}}
 					>
 						{descricao}
-					</Typography>
+					</Typography> */}
+					<ReactQuill
+						value={descricao}
+						readOnly={true}
+						theme={"bubble"}
+					/>
 				</BoxFlex>
 				<BoxFlex>
 					<Typography variant="h5" style={{ fontWeight: "bold" }} align="left">

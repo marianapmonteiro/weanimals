@@ -43,7 +43,7 @@ function TabsMenu({ value, handleChange, listagemAnimais }) {
 					value={value}
 					onChange={handleChange}
 				>
-					{listagemAnimais.map((item, idx) => {
+					{listagemAnimais.map((item) => {
 						return (
 							<Tab
 								sx={{
@@ -52,7 +52,7 @@ function TabsMenu({ value, handleChange, listagemAnimais }) {
 									alignItems: "flex-start",
 								}}
 								label={item}
-								value={idx}
+								value={item}
 							/>
 						);
 					})}

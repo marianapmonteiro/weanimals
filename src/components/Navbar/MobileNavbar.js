@@ -34,9 +34,9 @@ function MobileNavbar({ navigate }) {
 		<Container>
 			<Menu>
 				<Item>
-				<img src={logo} alt='logo' style={{ width: "150px", height:"50px"}} onClick={() => {
-							navigate("/");
-						}} />
+					<img src={logo} alt='logo' style={{ width: "150px", height: "50px" }} onClick={() => {
+						navigate("/");
+					}} />
 				</Item>
 			</Menu>
 

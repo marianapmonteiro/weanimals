@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Divider, Typography, TextField, InputAdornment } from "@mui/material";
 import styled from "@emotion/styled";
 import theme from "../../theme/theme";
@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
 	width: 100%;
-
 `;
 
 const UlStyled = styled.ul`
@@ -71,6 +70,16 @@ const TitleandSearchBox = styled.div`
 
 function Categorias({ Racas, Especies, Category }) {
 	const navigate = useNavigate();
+	const [searchValue, setSearchValue] = useState("");
+	const [searchValueRaca, setSearchValueRaca] = useState("");
+
+	const filteredEspecies = Especies.filter((item) =>
+		item.nome.toLowerCase().includes(searchValue.toLowerCase())
+	);
+	const filteredRacas = Racas.filter((item) =>
+		item.nome.toLowerCase().includes(searchValueRaca.toLowerCase())
+	);
+
 	return (
 		<Container>
 			<BoxCategory>
@@ -93,16 +102,19 @@ function Categorias({ Racas, Especies, Category }) {
 								</InputAdornment>
 							),
 						}}
+						value={searchValue}
+						onChange={(e) => setSearchValue(e.target.value)}
 					/>
 				</TitleandSearchBox>
 				<UlStyled>
 					{Especies.length > 0 ? (
-						Especies.map((item) => (
+						filteredEspecies.map((item) => (
 							<ListItem
 								key={item.nome}
 								onClick={() => {
 									navigate("/especie", {
 										state: {
+											id: item._id,
 											nome: item.nome,
 											descricao: item.descricao,
 											etiquetas: item.etiquetas,
@@ -158,11 +170,13 @@ function Categorias({ Racas, Especies, Category }) {
 								</InputAdornment>
 							),
 						}}
+						value={searchValueRaca}
+						onChange={(e) => setSearchValueRaca(e.target.value)}
 					/>
 				</TitleandSearchBox>
 				<UlStyled>
 					{Racas.length > 0 ? (
-						Racas.map((item) => (
+						filteredRacas.map((item) => (
 							<ListItem
 								key={item}
 								onClick={() => {

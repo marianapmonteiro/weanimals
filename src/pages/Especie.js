@@ -10,6 +10,9 @@ import theme from "../theme/theme";
 import { useLocation, useNavigate } from "react-router-dom";
 import Carousel from "react-gallery-carousel";
 import "react-gallery-carousel/dist/index.css";
+import { GetRacas } from '../requests/Raca'
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const MainContainer = styled.div`
 	width: 100%;
@@ -74,11 +77,29 @@ const Alert = styled.div`
 `;
 
 function Especie() {
+	const navigate = useNavigate();
 	const location = useLocation();
-	const { nome, descricao, etiquetas, racas, imagens, author } = location.state;
+	const { id, nome, descricao, etiquetas, imagens, author } = location.state;
+	const [racas, setRacas] = useState([]);
+	const [filteredRacas, setFilteredRacas] = useState([])
 
+	useEffect(() => {
+		const fetchData = async () => {
+			await GetRacas(setRacas);
+		};
+		fetchData();
+
+	}, []);
+
+	useEffect(() => {
+		const filteredRacas = racas.filter((item) => item.especie === id);
+		setFilteredRacas(filteredRacas);
+	}, [racas]);
+
+
+	console.log('filteredRacasNames', setFilteredRacas)
 	const images = imagens.map((item) => ({
-		src: `http://localhost:3001/uploads/${item}`,
+		src: `http://localhost:3001/uploads/especies/${item}`,
 	}));
 
 	return (
@@ -94,11 +115,11 @@ function Especie() {
 						</Typography>
 						<Typography variant="body1">{nome}</Typography>
 					</BoxFlex>
-					<BoxFlex>
+					<BoxFlex style={{ flexDirection: "column", alignItems: "flex-start" }}>
 						<Typography variant="h5" mt={0} style={{ fontWeight: "bold" }}>
 							Descricao:
 						</Typography>
-						<Typography
+						{/* <Typography
 							alignItems="flex-end"
 							mt={0}
 							style={{
@@ -106,7 +127,12 @@ function Especie() {
 							}}
 						>
 							{descricao}
-						</Typography>
+						</Typography> */}
+						<ReactQuill
+							value={descricao}
+							readOnly={true}
+							theme={"bubble"}
+						/>
 					</BoxFlex>
 					<BoxFlex>
 						<Typography variant="h5" style={{ fontWeight: "bold" }}>
@@ -138,12 +164,22 @@ function Especie() {
 						</Typography>
 					</BoxFlex>
 					<BoxFlex style={{ marginTop: "1em" }}>
-						<Typography style={{ color: theme.palette.secondary.dark }}>
-							raça1
-						</Typography>
-						<Typography style={{ color: theme.palette.secondary.dark }}>
-							raça2
-						</Typography>
+						{filteredRacas.length > 0 ? filteredRacas.map((item) => {
+							return (
+								<Typography variant="body1" style={{ cursor: 'pointer' }} onClick={() => {
+									navigate("/raca", {
+										state: {
+											nome: item.nome,
+											descricao: item.descricao,
+											cuidadosEspecificos: item.cuidadosEspecificos,
+											imagens: item.imagens,
+											especie: item.especie,
+										},
+									});
+								}}>{item.nome}</Typography>
+							)
+						}) : <Typography>Nenhuma raça encontrada</Typography>}
+
 					</BoxFlex>
 					<Box style={{ marginTop: '2em', display: 'flex', flexDirection: "column", gap: '2em', width: '100%' }}>
 						<Divider />

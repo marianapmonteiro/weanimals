@@ -2,12 +2,14 @@ import api from "../utils/api";
 import Swal from "sweetalert2";
 
 export const AddEspecie = async (
-	formData
+	formData,
+	token
 ) => {
 	await api
 		.post(`/app/addespecie`, formData, {
 			headers: {
 				"Content-Type": "multipart/form-data",
+				"Authorization": `Bearer ${token}`
 			}
 		})
 		.then((res) => {
@@ -38,13 +40,28 @@ export const AddEspecie = async (
 		});
 };
 
-export const GetEspecies = async (setEspecies) => {
-	await api
-		.get(`/app/getespecies`)
+export const GetEspecies = () => {
+	return api.get(`/app/getespecies`)
 		.then((res) => {
-			setEspecies(res.data);
+			return res.data;
 		})
 		.catch((err) => {
 			console.log(err);
+			throw err;
+		});
+};
+
+export const GetEspeciesByAuthorId = (token) => {
+	return api.get(`/app/getespeciesbyid`, {
+		headers: {
+			"Authorization": `Bearer ${token}`
+		}
+	})
+		.then((res) => {
+			return res.data;
+		})
+		.catch((err) => {
+			console.log(err);
+			throw err;
 		});
 };

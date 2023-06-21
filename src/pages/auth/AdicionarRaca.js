@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { AddRaca } from "../../requests/Raca";
 import {
 	Typography,
 	Container,
@@ -12,12 +14,11 @@ import {
 	CircularProgress,
 } from "@mui/material";
 import styled from "@emotion/styled";
-import rabbit from "../../Images/rabbit.jpg";
+import imagem from "../../Images/addImagem.jpg";
 import theme from "../../theme/theme";
-import axios from "axios";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { AddRaca } from "../../requests/Raca";
-import Swal from "sweetalert2";
+import TextEditor from "../../components/TextEditor";
+
 
 const Box = styled.div`
 	width: 100%;
@@ -92,6 +93,9 @@ const Imgs = styled.img`
 	border-radius: 1000px;
 `;
 function AdicionarRaca() {
+	const { cookies } = useContext(AuthContext);
+	const author = cookies.UserData.name;
+	const token = cookies.WeAnimals;
 	const location = useLocation();
 	const [especie, setEspecie] = useState({});
 	const [nome, setNome] = useState("");
@@ -100,13 +104,11 @@ function AdicionarRaca() {
 	const [cuidadosEspecificos, setCuidadosEspecificos] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [helpText, setHelpText] = useState(false);
+	const [errorLabel, setErrorLabel] = useState("");
+
 
 	const especies = location.state.especies;
 	const category = location.state.category;
-
-	console.log("especies:", especies);
-
-	const exemplos = ["Noturno", "Sociavel", "Territorialista"];
 
 	const handleImage = (e) => {
 		const newImages = Array.from(e.target.files);
@@ -120,15 +122,6 @@ function AdicionarRaca() {
 			return newImages;
 		});
 	};
-	console.log(
-		"dados:",
-		especie,
-		nome,
-		descricao,
-		files,
-		cuidadosEspecificos,
-		category
-	);
 
 	const addRaca = async () => {
 		setLoading(true);
@@ -137,45 +130,30 @@ function AdicionarRaca() {
 			nome === "" ||
 			descricao === "" ||
 			files.length === 0 ||
-			cuidadosEspecificos === 0
+			cuidadosEspecificos === '' ||
+			files.length > 5
 		) {
 			setHelpText(true);
+			setErrorLabel("Preencha todos os campos com os valores corretos")
 		} else {
 			try {
-				const formData = new FormData();
-				const key = "8b39fd8e05217d4a8bc071ccfe514541";
-
-				for (let i = 0; i < files.length; i++) {
-					formData.append("image", files[i]);
-				}
-
-				const imageUrls = [];
-
-				for (let i = 0; i < files.length; i++) {
-					const response = await axios({
-						method: "post",
-						url: `https://api.imgbb.com/1/upload?key=${key}`,
-						data: formData,
-					});
-					const imageUrl = response.data.data.url;
-					imageUrls.push(imageUrl);
-				}
 				const especieId = especie._id;
-				await AddRaca(
-					especieId,
-					nome,
-					descricao,
-					imageUrls,
-					cuidadosEspecificos,
-					category
-				);
-				Swal.fire({
-					position: "center",
-					icon: "success",
-					title: "Raça adicionada com sucesso!",
-					showConfirmButton: false,
-					timer: 1500,
+				const formData = new FormData();
+				formData.append("especie", especieId);
+				formData.append("nome", nome);
+				formData.append("descricao", descricao);
+				files.forEach((file) => {
+					formData.append("imagens", file);
 				});
+				formData.append("cuidadosEspecificos", cuidadosEspecificos);
+				formData.append("category", category);
+				formData.append("author", author);
+
+				await AddRaca(
+					formData,
+					token
+				);
+
 			} catch (error) {
 				console.error("Error uploading images:", error);
 			}
@@ -192,11 +170,11 @@ function AdicionarRaca() {
 				</Title>
 				<BoxInformacoes>
 					<img
-						src={rabbit}
+						src={imagem}
 						alt="dog"
 						width="100px"
 						height="100px"
-						style={{ borderRadius: "1000px" }}
+						style={{ borderRadius: "1000px", objectFit: "cover" }}
 					/>
 					<BoxInfo>
 						<Typography
@@ -238,9 +216,9 @@ function AdicionarRaca() {
 						}}
 					/>
 				</BoxForm>
-				<BoxForm>
+				<BoxForm >
 					<Typography>Descrição</Typography>
-					<TextField
+					{/* <TextField
 						style={{ width: "50%" }}
 						rows={4}
 						multiline
@@ -248,9 +226,23 @@ function AdicionarRaca() {
 						onChange={(e) => {
 							setDescricao(e.target.value);
 						}}
-					/>
+					/> */}
+					<TextEditor value={descricao} onChange={setDescricao} width="50%" />
 				</BoxForm>
 
+
+				<BoxForm>
+					<Typography>Cuidados Específicos</Typography>
+					<TextField
+						style={{ width: "50%" }}
+						rows={4}
+						multiline
+						margin="dense"
+						onChange={(e) => {
+							setCuidadosEspecificos(e.target.value);
+						}}
+					/>
+				</BoxForm>
 				<BoxForm>
 					<Typography>Imagens</Typography>
 					<Button
@@ -291,22 +283,10 @@ function AdicionarRaca() {
 					</Thumbs>
 				</BoxForm>
 
-				<BoxForm>
-					<Typography>Cuidados Específicos</Typography>
-					<TextField
-						style={{ width: "50%" }}
-						rows={4}
-						multiline
-						margin="dense"
-						onChange={(e) => {
-							setCuidadosEspecificos(e.target.value);
-						}}
-					/>
-				</BoxForm>
 				{helpText ? (
 					<BoxForm>
 						<Typography variant="body1" style={{ color: "red" }}>
-							Preencha todos os campos!
+							{errorLabel}
 						</Typography>
 					</BoxForm>
 				) : null}

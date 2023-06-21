@@ -12,6 +12,7 @@ import AdicionarRaca from "../pages/auth/AdicionarRaca";
 import PareamentoPet from "../pages/PareamentoPet";
 import Especie from "../pages/Especie";
 import Raca from "../pages/Raca";
+import Profile from "../pages/auth/Profile";
 
 function RoutesApp() {
 	return (
@@ -25,6 +26,7 @@ function RoutesApp() {
 			>
 				<Route path="/addespecie" element={<AdicionarEspecie />} />
 				<Route path="/addraca" element={<AdicionarRaca />} />
+				<Route path="/perfil" element={<Profile />} />
 			</Route>
 			<Route path="/" element={<Home />} />
 			<Route path="/login" element={<Login />} />

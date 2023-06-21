@@ -1,14 +1,13 @@
-import React, { createContext, useState } from "react";
+import React, { createContext } from "react";
 import api from '../utils/api'
-import { Cookies } from "react-cookie";
+import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
-    const acess_token = new Cookies();
-    const [user, setUser] = useState({})
+    const [cookies, setCookie, removeCookie] = useCookies(['WeAnimals', 'UserData']);
 
     const loginRequest = async (email, password, setHelpText, setError) => {
         let data = {
@@ -20,10 +19,8 @@ export const AuthProvider = ({ children }) => {
             .then((res) => {
                 if (res.data.message) {
                     navigate("/");
-                    acess_token.set("WeAnimals", res.data.token, {
-                        path: "/",
-                    })
-                    setUser(res.data.data)
+                    setCookie('WeAnimals', res.data.token, { path: '/' });
+                    setCookie('UserData', res.data.data, { path: '/' });
                     return { message: res.data.message, token: res.data.token, data: res.data.data };
                 } if (res.data.error) {
                     setHelpText(true);
@@ -36,14 +33,13 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logoutRequest = () => {
-        acess_token.remove("WeAnimals", { path: "/" });
-        console.log(acess_token);
-        setUser("");
+        removeCookie('WeAnimals');
+        removeCookie('UserData');
         navigate("/login");
     };
 
     return (
-        <AuthContext.Provider value={{ loginRequest, logoutRequest, acess_token, user }}>
+        <AuthContext.Provider value={{ loginRequest, logoutRequest, cookies, setCookie }}>
             {children}
         </AuthContext.Provider>
     );
