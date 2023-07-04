@@ -1,29 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import theme from "../theme/theme";
 import { Container, Box, CircularProgress } from "@mui/material";
+import { useNavigate } from 'react-router-dom';
 import Layout from "../components/PareamentoPet/Layout";
 import styled from "@emotion/styled";
-import dia from "../Images/dia.jpg";
-import tarde from "../Images/tarde.jpg";
-import noite from "../Images/noite.jpg";
-import relogio1 from "../Images/relogio1.jpg";
-import relogio2 from "../Images/relogio2.jpg";
-import relogio3 from "../Images/relogio3.jpg";
-import carinhoso from '../Images/carinhoso.jpg'
-import independente from '../Images/independente.jpg'
-import sociavel from '../Images/sociavel.jpg'
-import peludos from '../Images/peludos.jpg'
-import pelocurto from '../Images/pelocurto.jpg'
-import tantofazPelos from '../Images/tantofazPelos.jpg'
-import grandeporte from '../Images/grandeporte.jpg'
-import pequenoporte from '../Images/pequenoporte.jpg'
-import tantofazporte from '../Images/tantofazporte.jpg'
-import soltocasa from '../Images/soltocasa.jpg'
-import alojamento from '../Images/alojamento.jpg'
-import adaptarcasa from '../Images/adaptarcasa.jpg'
-import casagrande from '../Images/casagrande.jpg'
-import casapequena from '../Images/casapequena.jpg'
-import casamedia from '../Images/casamedia.jpg'
+import steps from "../components/PareamentoPet/Steps";
 
 
 const BoxContainer = styled.div`
@@ -41,61 +22,47 @@ const BoxContainer = styled.div`
 `;
 
 function PareamentoPet() {
-	const steps = [
-		{
-			title: "Seus Hábitos são:",
-			options: ["Diurnos", "Matutinos", "Noturnos"],
-			images: [dia, tarde, noite],
-			value: 1,
-		},
-		{
-			title: "Quanto tempo disponível você tem por dia?",
-			options: ["Menos de 5 horas", "Mais de 5 horas", "Não tenho muito tempo"],
-			images: [relogio1, relogio2, relogio3],
-			value: 2,
-		},
-		{
-			title: "Você prefere animais de grande ou pequeno porte?",
-			options: ["Pequeno porte", "Grande porte", "Tanto faz"],
-			images: [pequenoporte, grandeporte, tantofazporte],
-			value: 3,
-		},
-		{
-			title: "Qual a característica que você mais gosta em um bichinho?",
-			options: ["Independente", "Carinhoso", "Sociável"],
-			images: [independente, carinhoso, sociavel],
-			value: 4,
-		},
-		{
-			title: "Sobre pelagem: Qual você prefere?",
-			options: ["Pelos curtos", "Peludos", "Tanto faz"],
-			images: [pelocurto, peludos, tantofazPelos],
-			value: 5,
-		},
-		{
-			title: "Você pretende deixar o seu animalzinho solto pela casa ou em um alojamento?",
-			options: ["Em um espaço especial só para ele", "Solto pela casa", "Terei que adaptar minha casa para solta-lo"],
-			images: [alojamento, soltocasa, adaptarcasa],
-			value: 6,
-		},
-		{
-			title: "Qual o tamanho do seu lar?",
-			options: ["Grande, com quintal", "Médio", "Pequeno"],
-			images: [casagrande, casamedia, casapequena],
-			value: 7,
-		},
-
-	];
+	const navigate = useNavigate()
 
 	const [value, setValue] = useState(0);
 	const [loading, setLoading] = useState(false);
+	const [respostas, setRespostas] = useState([]);
+	const [etiquetaValor, setEtiquetaValor] = useState(0);
+	const [option, setOption] = useState('');
+	const [helpText, setHelpText] = useState(false)
+
+	useEffect(() => {
+		console.log('respostas;;;', respostas);
+	}, [respostas]);
+
 	const handleNext = () => {
-		setLoading(true);
-		setTimeout(() => {
-			setValue(value + 1);
-			setLoading(false);
-		}, 2000); // Tempo de espera de 2 segundos
+		if (option === '') {
+			setHelpText(true)
+		} else {
+			setHelpText(false)
+
+			steps.forEach((step) => {
+				if (step.options.includes(option)) {
+					setRespostas((prevValor) => [...prevValor, step.etiquetas[etiquetaValor]]);
+				}
+
+			})
+			if (value === 7) {
+				navigate('/resultadopet', {
+					state: {
+						respostas: respostas
+					}
+				})
+			}
+			setLoading(true);
+			setTimeout(() => {
+				setValue(value + 1);
+				setLoading(false);
+			}, 1000);
+		}
+		setOption('')
 	};
+
 	return (
 		<Container>
 			<BoxContainer>
@@ -104,13 +71,19 @@ function PareamentoPet() {
 						<Layout
 							key={index}
 							title={step.title}
-							options={step.options}
+							options={step}
+							etiquetas={step.etiquetas}
 							images={step.images}
 							setValue={setValue}
 							value={step.value}
 							setLoading={setLoading}
 							loading={loading}
 							handleNext={handleNext}
+							option={option}
+							setOption={setOption}
+							helpText={helpText}
+							setEtiquetaValor={setEtiquetaValor}
+
 						/>
 					) : null
 				)}

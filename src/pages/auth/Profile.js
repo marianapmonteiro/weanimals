@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
+import { useNavigate } from "react-router-dom";
 import { Grid, Divider, Typography, TextField, Container, Button } from "@mui/material";
 import { AuthContext } from '../../context/AuthContext';
 import { GetEspeciesByAuthorId } from "../../requests/Especies"
@@ -44,6 +45,7 @@ const Card = styled.div`
 
 function Profile() {
     const { cookies, setCookie } = useContext(AuthContext)
+    const navigate = useNavigate();
     const [user, setUser] = useState(cookies.UserData)
     const token = cookies.WeAnimals;
 
@@ -75,7 +77,7 @@ function Profile() {
         fetchData();
     }, []);
 
-
+    console.log('datsa::', publicacoesEspecies, publicacoesRacas)
     const AlterarPerfil = async () => {
         await AltPerfil(name, email, altPassword, oldPassword, password, confirmPassword, token, setCookie);
     }
@@ -87,7 +89,33 @@ function Profile() {
         setAltPassword(true);
         setAltSenha(false);
     }
+    const navigatePublicacoes = (item) => {
+        if (item.especie) {
+            navigate('/raca', {
+                state: {
+                    especie: item.especie,
+                    nome: item.nome,
+                    descricao: item.descricao,
+                    imagens: item.imagens,
+                    cuidadosEspecificos: item.cuidadosEspecificos,
+                    author: item.authorName
+                }
 
+            })
+        } else {
+            navigate('/especie', {
+                state: {
+                    id: item._id,
+                    nome: item.nome,
+                    descricao: item.descricao,
+                    etiquetas: item.etiquetas,
+                    imagens: item.imagens,
+                    author: item.authorName
+                }
+            })
+        }
+
+    }
     return (
         <Container maxWidth="lg">
             <Grid container sx={{
@@ -163,7 +191,7 @@ function Profile() {
                 <div style={{ display: 'flex', flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start", marginTop: "2em" }}>
                     {(publicacoesEspecies.length > 0 || publicacoesRacas.length > 0) ?
                         [...publicacoesEspecies, ...publicacoesRacas].map((item) => (
-                            <Button>{item.nome}</Button>
+                            <Button onClick={() => { navigatePublicacoes(item) }}>{item.nome}</Button>
                         )) :
                         <Typography variant="body1">Nenhuma publicação encontrada</Typography>
                     }

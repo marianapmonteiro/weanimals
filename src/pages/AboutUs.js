@@ -129,9 +129,9 @@ export default function AboutUs() {
 			<Container maxWidth="lg">
 				<Grid container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 					<Grid item xs={12} md={8} >
-						<BoxText>
+						<BoxText >
 							<Typography variant="h4">Nossa comunidade</Typography>
-							<Typography variant="body1">Nossa comunidadeNossa comunidadeNossa comunidadeNossa comunidadeNossa comunidadeNossa comunidade</Typography>
+							<Typography variant="body1">Aqui você pode ver sobre cuidados, características e comunidades voltadas para cada espécie! Já tem um bichinho e quer compartilhar seus cuidados e características com novos tutores? Aqui é possível! Basta criar uma conta e adicionar uma espécie ou raça de animalzinho.</Typography>
 						</BoxText>
 
 					</Grid>
@@ -143,9 +143,9 @@ export default function AboutUs() {
 						<Img src={bunnyCircle} alt="Coelho" />
 					</Grid>
 					<Grid item xs={12} md={4}>
-						<BoxText>
+						<BoxText style={{ width: "70%" }}>
 							<Typography variant="h4">Objetivos</Typography>
-							<Typography variant="body1">Nossa comunidadeNossa comunidadeNossa comunidadeNossa comunidadeNossa comunidadeNossa comunidade</Typography>
+							<Typography variant="body1">A plataforma da WeAnimals foi criada com intuito de trazer informações importantes sobre cada espécie para possíveis novos tutores. Auxiliando a uma adoção responsável</Typography>
 						</BoxText>
 					</Grid>
 				</Grid>

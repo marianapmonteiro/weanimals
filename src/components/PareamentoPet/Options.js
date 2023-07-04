@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
 	FormControl,
 	RadioGroup,
@@ -7,6 +7,7 @@ import {
 	Typography,
 } from "@mui/material";
 import styled from "@emotion/styled";
+import theme from "../../theme/theme";
 
 const Image = styled.img`
 	width: 350px;
@@ -16,6 +17,10 @@ const Image = styled.img`
 	background-position: center;
 	object-fit: cover;
 	border-radius: 8px;
+	@media (max-width: ${theme.breakpoints.values.sm}px) {
+		width:  250px;
+		height: 250px;
+	}
 `;
 
 const Container = styled.div`
@@ -31,31 +36,39 @@ const Box = styled.div`
 	flex-direction: column;
 `;
 
-const Options = ({ options, images }) => {
-	const [selectedOption, setSelectedOption] = useState("");
+const Options = ({ options, images, option, setOption, setEtiquetaValor }) => {
 
 	// Function to handle option selection
-	const handleOptionChange = (event) => {
-		setSelectedOption(event.target.value);
+	const handleOptionChange = (e, index) => {
+		setOption(e.target.value);
+		setEtiquetaValor(index)
+
 	};
+
 
 	return (
 		<FormControl component="fieldset" style={{ display: "flex" }}>
 			<Container>
-				{options.map((item, index) => (
+				{options.options.map((item, index) => (
 					<Box>
-						<FormControlLabel
-							key={index}
-							value={item}
-							control={<Radio />}
-							label={
-								<div
-									style={{ display: "flex", flexWrap: "wrap", width: "250px" }}
-								>
-									<Typography>{item}</Typography>
-								</div>
-							}
-						/>
+						<RadioGroup
+							aria-labelledby="demo-controlled-radio-buttons-group"
+							name="controlled-radio-buttons-group"
+							value={option}
+							onChange={(e) => { handleOptionChange(e, index) }}>
+							<FormControlLabel
+								key={index}
+								value={item}
+								control={<Radio />}
+								label={
+									<div
+										style={{ display: "flex", flexWrap: "wrap", width: "250px" }}
+									>
+										<Typography>{item}</Typography>
+									</div>
+								}
+							/>
+						</RadioGroup>
 						<Image src={images[index]} alt={`Option ${index + 1}`} />
 					</Box>
 				))}

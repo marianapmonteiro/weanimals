@@ -10,6 +10,9 @@ import {
 	Button,
 	CircularProgress,
 	IconButton,
+	Select,
+	MenuItem,
+	Box
 } from "@mui/material";
 import styled from "@emotion/styled";
 import imagem from "../../Images/addImagem.jpg";
@@ -17,11 +20,12 @@ import theme from "../../theme/theme";
 import AddIcon from "@mui/icons-material/Add";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import TextEditor from "../../components/TextEditor";
+import FacebookIcon from '@mui/icons-material/Facebook';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import ClearIcon from '@mui/icons-material/Clear';
 
-const Box = styled.div`
-	width: 100%;
-	height: 100%;
-`;
+
 const Title = styled.div`
 	width: 100%;
 `;
@@ -97,8 +101,9 @@ function AdicionarEspecie() {
 	const token = cookies.WeAnimals;
 	const location = useLocation();
 	const category = location.state.category;
-	console.log('token::', token)
-	const exemplos = ["Noturno", "Sociavel", "Territorialista"];
+	const etiquetasValores = ["Hábitos noturnos", "Hábitos vespertinos", "Hábitos matutinos", "Territorialista",
+		"Sociável", "Independente", "Pode viver solto pela casa", "Requer adaptação para viver solto pela casa", "Tem que ter um espaço somente para ele",
+		"Se dá bem com outros animais", "Carinhoso", "Deve viver sem outros pets", "Peludo", "Pelos curtos", "Sem pelos", "Pequeno porte", "Grande porte", "Porte médio"]
 	const [nome, setNome] = useState("");
 	const [descricao, setDescricao] = useState("");
 	const [files, setFiles] = useState([]);
@@ -109,8 +114,35 @@ function AdicionarEspecie() {
 	const [helpText, setHelpText] = useState(false);
 	const [errorLabel, setErrorLabel] = useState("");
 
-	const handleEtiquetas = () => {
-		setEtiquetas((prevValor) => [...prevValor, etiqueta]);
+	const [comunidade, setComunidade] = useState(false);
+	const [comunidadeNome, setComunidadeNome] = useState('');
+	const [comunidadeLink, setComunidadeLink] = useState('')
+	const [redeSocial, setRedeSocial] = useState('')
+	const [comunidades, setComunidades] = useState([])
+
+	const redesSociais = [
+		'Facebook',
+		'Instagram',
+		'WhatsApp'
+	]
+
+
+	const AddComunidade = () => {
+		setComunidades((preValor) => {
+			const novaComunidade = { nome: comunidadeNome, redeSocial: redeSocial, link: comunidadeLink };
+			return [...preValor, novaComunidade];
+		});
+		setComunidade(false)
+	}
+	const handleRemoveComunidade = (index) => {
+		setComunidades((prev) => {
+			const novoArray = [...prev];
+			novoArray.splice(index, 1)
+			return novoArray;
+		})
+	}
+	const handleEtiquetas = (value) => {
+		setEtiquetas((prevValor) => [...prevValor, value]);
 	};
 
 	const handleDeleteEtiqueta = (index) => {
@@ -161,6 +193,10 @@ function AdicionarEspecie() {
 				});
 				formData.append("category", category);
 				formData.append("author", author);
+				if (comunidades.length > 0) {
+					const comunidadesJSON = JSON.stringify(comunidades);
+					formData.append("comunidades", comunidadesJSON);
+				}
 				await AddEspecie(formData, token);
 
 			} catch (error) {
@@ -214,8 +250,6 @@ function AdicionarEspecie() {
 					<Typography>Descrição</Typography>
 					<TextEditor value={descricao} onChange={setDescricao} width="50%" />
 				</BoxForm>
-
-
 				<BoxForm>
 					<Typography>Etiquetas</Typography>
 					<Box
@@ -226,55 +260,44 @@ function AdicionarEspecie() {
 							gap: "2em",
 						}}
 					>
-						<TextField
+						{/* <TextField
 							style={{ width: "20%" }}
 							multiline
 							margin="dense"
 							onChange={(e) => {
 								setEtiqueta(e.target.value);
 							}}
-						/>{" "}
+						/>{" "} */}
+						<Select
+							value={etiquetasValores}
+							style={{ width: "30%" }}
+							margin="dense"
+							onChange={(e) => {
+								handleEtiquetas(e.target.value);
+							}}
+						>
+							{etiquetasValores.map((item) => {
+								return <MenuItem value={item}>{item}</MenuItem>;
+							})}
+						</Select>
 						<AddIcon
-							style={{ color: theme.palette.secondary.dark, cursor: "pointer" }}
-							onClick={handleEtiquetas}
+						// style={{ color: theme.palette.secondary.dark, cursor: "pointer" }}
+						// onClick={handleEtiquetas}
 						/>
 					</Box>
 				</BoxForm>
 				<BoxExemplos>
-					{etiquetas.length === 0 ? (
-						<div
-							style={{
-								opacity: "0.5",
-								display: "flex",
-								flexDirection: "column",
-								gap: "1em",
-							}}
-						>
-							<Typography variant="body1">Ex:</Typography>
-							{exemplos.map((item) => (
-								<Alert key={item}>
-									<Typography variant="body1" style={{ color: "white" }}>
-										{item}
-									</Typography>
-									<HighlightOffIcon style={{ color: "white" }} />
-								</Alert>
-							))}
-						</div>
-					) : (
-						<>
-							{etiquetas.map((item, index) => (
-								<Alert key={item}>
-									<Typography variant="body1" style={{ color: "white" }}>
-										{item}
-									</Typography>
-									<HighlightOffIcon
-										style={{ color: "white", cursor: "pointer" }}
-										onClick={() => handleDeleteEtiqueta(index)}
-									/>
-								</Alert>
-							))}
-						</>
-					)}
+					{etiquetas.map((item, index) => (
+						<Alert key={item}>
+							<Typography variant="body1" style={{ color: "white" }}>
+								{item}
+							</Typography>
+							<HighlightOffIcon
+								style={{ color: "white", cursor: "pointer" }}
+								onClick={() => handleDeleteEtiqueta(index)}
+							/>
+						</Alert>
+					))}
 				</BoxExemplos>
 				<BoxForm>
 					<Typography>Imagens</Typography>
@@ -317,7 +340,69 @@ function AdicionarEspecie() {
 							))}
 					</Thumbs>
 				</BoxForm>
+				<Divider />
+				<BoxForm style={{ marginTop: "2em" }}>
+					<Typography variant="h5">Adicionar alguma comunidade </Typography>
+					<Typography variant="body2" style={{ marginTop: "1em" }}>
+						Nesse campo você pode adicionar comunidades/grupos em redes sociais que você acha que serão úteis para novos tutores!
+					</Typography>
+					<Select
+						value={redeSocial}
+						style={{ width: "30%", marginTop: '2em' }}
+						margin="dense"
+						onChange={(e) => {
+							setRedeSocial(e.target.value);
+						}}
+					>
+						{redesSociais.map((item) => {
+							return <MenuItem value={item} onClick={() => { setComunidade(true) }}>{item}</MenuItem>;
+						})}
+					</Select>
+					{comunidade ?
+						<>
+							<Box sx={{
+								marginTop: '2em', display: "flex", flexDirection: "row", gap: "2em",
+								"@media (max-width: 600px)": {
+									flexDirection: "column"
+								},
+							}}>
 
+								<TextField sx={{
+									width: "30%", "@media (max-width: 600px)": {
+										width: "100%"
+									},
+								}}
+									label="Nome da comunidade/grupo"
+									onChange={(e) => setComunidadeNome(e.target.value)}
+								/>
+
+								<TextField sx={{
+									width: "30%", "@media (max-width: 600px)": {
+										width: "100%"
+									},
+								}}
+									label="Link/convite da comunidade/grupo"
+									onChange={(e) => setComunidadeLink(e.target.value)}
+								/>
+
+							</Box>
+							<Box sx={{ width: "100%", marginTop: "2em", display: "flex", gap: "1em" }}>
+								<Button variant="outlined" onClick={() => { AddComunidade() }}>Adicionar comunidade</Button>
+								<Button variant="outlined" onClick={() => { setComunidade(false) }}>Cancelar</Button>
+							</Box>
+						</> : null}
+					{comunidades.length > 0 ?
+						comunidades.map((item, index) => {
+							return (
+								<Box style={{ display: "flex", gap: "1em", marginTop: "3em" }}>
+									{item.redeSocial === 'Instagram' ? <InstagramIcon /> : item.redeSocial === 'Facebook' ? <FacebookIcon /> : <WhatsAppIcon />}
+									<a href={item.link} target="_blank">{item.nome}</a>
+									<ClearIcon style={{ cursor: "pointer" }} onClick={() => { handleRemoveComunidade(index) }} />
+								</Box>
+							)
+						})
+						: null}
+				</BoxForm>
 				{helpText ? (
 					<BoxForm>
 						<Typography variant="body1" style={{ color: "red" }}>

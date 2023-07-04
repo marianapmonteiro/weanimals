@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { GetComunidades } from "../requests/Comunidades";
+import { GetRacas } from '../requests/Raca'
 import {
 	Divider,
 	Typography,
@@ -7,12 +10,13 @@ import {
 } from "@mui/material";
 import styled from "@emotion/styled";
 import theme from "../theme/theme";
-import { useLocation, useNavigate } from "react-router-dom";
 import Carousel from "react-gallery-carousel";
 import "react-gallery-carousel/dist/index.css";
-import { GetRacas } from '../requests/Raca'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
 const MainContainer = styled.div`
 	width: 100%;
@@ -45,15 +49,6 @@ const CarouselBox = styled.div`
 		height: 250px;
 	}
 `;
-const ImgCarousel = styled.img`
-	border-radius: 1000px;
-	width: 350px;
-	height: 350px;
-	@media (max-width: ${theme.breakpoints.values.sm}px) {
-		width: 200px;
-		height: 200px;
-	}
-`;
 
 const BoxFlex = styled.div`
 	display: flex;
@@ -81,23 +76,23 @@ function Especie() {
 	const location = useLocation();
 	const { id, nome, descricao, etiquetas, imagens, author } = location.state;
 	const [racas, setRacas] = useState([]);
-	const [filteredRacas, setFilteredRacas] = useState([])
+	const [comunidades, setComunidades] = useState([])
+
 
 	useEffect(() => {
 		const fetchData = async () => {
-			await GetRacas(setRacas);
+			const racasData = await GetRacas();
+			const filteredRacas = racasData.filter((item) => item.especie === id);
+			setRacas(filteredRacas)
+		}
+		const fetchData2 = async () => {
+			await GetComunidades(id, setComunidades)
 		};
-		fetchData();
 
+		fetchData();
+		fetchData2()
 	}, []);
 
-	useEffect(() => {
-		const filteredRacas = racas.filter((item) => item.especie === id);
-		setFilteredRacas(filteredRacas);
-	}, [racas]);
-
-
-	console.log('filteredRacasNames', setFilteredRacas)
 	const images = imagens.map((item) => ({
 		src: `http://localhost:3001/uploads/especies/${item}`,
 	}));
@@ -164,7 +159,7 @@ function Especie() {
 						</Typography>
 					</BoxFlex>
 					<BoxFlex style={{ marginTop: "1em" }}>
-						{filteredRacas.length > 0 ? filteredRacas.map((item) => {
+						{racas.length > 0 ? racas.map((item) => {
 							return (
 								<Typography variant="body1" style={{ cursor: 'pointer' }} onClick={() => {
 									navigate("/raca", {
@@ -181,6 +176,19 @@ function Especie() {
 						}) : <Typography>Nenhuma raça encontrada</Typography>}
 
 					</BoxFlex>
+					<Box style={{ display: "flex", flexDirection: "column", gap: "2em", marginTop: "5em" }}>
+						<Typography variant="h5" style={{ fontWeight: "bold" }}>Comunidades</Typography>
+						{comunidades.length > 0 ?
+							comunidades.map((item) => {
+								return (
+									<Box style={{ display: "flex", alignItems: "center", gap: "1em" }}>
+										{item.redeSocial === 'Instagram' ? <InstagramIcon /> : item.redeSocial === 'Facebook' ? <FacebookIcon /> : <WhatsAppIcon />}
+										<a href={item.link} target="_blank">{item.nome}</a>
+									</Box>
+								)
+							})
+							: <Typography>Nenhuma comunidade cadastrada</Typography>}
+					</Box>
 					<Box style={{ marginTop: '2em', display: 'flex', flexDirection: "column", gap: '2em', width: '100%' }}>
 						<Divider />
 						<Typography >

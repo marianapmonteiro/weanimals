@@ -1,8 +1,6 @@
 import api from "../utils/api";
 import Swal from "sweetalert2";
 
-
-
 export const AltPerfil = async (name, email, altPassword, oldPassword, password, confirmPassword, token, setCookie) => {
     let data = {
         name: name,

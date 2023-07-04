@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import {
 	Typography,
 	Container,
+	Box,
+	Divider
 } from "@mui/material";
 import styled from "@emotion/styled";
 import theme from "../theme/theme";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Carousel from "react-gallery-carousel";
 import "react-gallery-carousel/dist/index.css";
 import { GetEspecies } from "../requests/Especies";
@@ -43,15 +45,6 @@ const CarouselBox = styled.div`
 		height: 250px;
 	}
 `;
-const ImgCarousel = styled.img`
-	border-radius: 1000px;
-	width: 350px;
-	height: 350px;
-	@media (max-width: ${theme.breakpoints.values.sm}px) {
-		width: 200px;
-		height: 200px;
-	}
-`;
 
 const BoxFlex = styled.div`
 	display: flex;
@@ -63,51 +56,26 @@ const BoxFlex = styled.div`
 		max-width: 300px;
 	}
 `;
-const Alert = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 1em;
-	width: fit-content;
-	background-color: #a39ce7;
-	padding: 0.5em;
-	padding-inline: 1em;
-`;
+
 
 function Raca() {
-	const navigate = useNavigate();
-	const [isMedium, setIsMedium] = useState(window.innerWidth <= 1919);
 	const location = useLocation();
-	const { especie, nome, descricao, imagens, cuidadosEspecificos } =
+	const { especie, nome, descricao, imagens, cuidadosEspecificos, author } =
 		location.state;
-	const [especies, setEspecies] = useState([]);
 	const [especieNome, setEspecieNome] = useState("");
-	console.log('especie:', especie)
 
 	const images = imagens.map((item) => ({
 		src: `http://localhost:3001/uploads/racas/${item}`,
 	}));
-
 	useEffect(() => {
 		const fetchData = async () => {
-			await GetEspecies(setEspecies);
-			especies.forEach((item) => {
-				if (item._id === especie) {
-					setEspecieNome(item.nome);
-				}
-			});
-		};
+			const especiesData = await GetEspecies();
+			const filteredEspecie = especiesData.filter((item) => item._id === especie);
+			setEspecieNome(filteredEspecie[0].nome)
+
+		}
 		fetchData();
 	}, []);
-	useEffect(() => {
-		especies.forEach((item) => {
-			if (item._id === especie) {
-				setEspecieNome(item.nome);
-			}
-		});
-	}, [especies]);
-
-	console.log('especie nome', especieNome)
 
 
 	return (
@@ -134,14 +102,6 @@ function Raca() {
 					<Typography variant="h5" style={{ fontWeight: "bold" }}>
 						Descricao:
 					</Typography>
-					{/* <Typography
-						mt={0}
-						style={{
-							wordBreak: "break-word",
-						}}
-					>
-						{descricao}
-					</Typography> */}
 					<ReactQuill
 						value={descricao}
 						readOnly={true}
@@ -161,6 +121,12 @@ function Raca() {
 						{cuidadosEspecificos}
 					</Typography>
 				</BoxFlex>
+				<Box style={{ marginTop: '2em', display: 'flex', flexDirection: "column", gap: '2em', width: '100%' }}>
+					<Divider />
+					<Typography >
+						Publicado por: {author}
+					</Typography>
+				</Box>
 			</Container>
 		</MainContainer>
 	);

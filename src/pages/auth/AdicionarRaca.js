@@ -56,22 +56,7 @@ const BoxForm = styled.div`
 	flex-direction: column;
 	margin-top: 5em;
 `;
-const BoxExemplos = styled.div`
-	margin-top: 1em;
-	display: flex;
-	flex-direction: column;
-	gap: 1em;
-	opacity: 0.5;
-`;
-const Alert = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 1em;
-	width: fit-content;
-	background-color: #a39ce7;
-	padding: 0.5em;
-`;
+
 const BoxBtn = styled.div`
 	width: 100%;
 	display: flex;

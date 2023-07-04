@@ -187,6 +187,7 @@ function Categorias({ Racas, Especies, Category }) {
 											cuidadosEspecificos: item.cuidadosEspecificos,
 											imagens: item.imagens,
 											especie: item.especie,
+											author: item.authorName
 										},
 									});
 								}}

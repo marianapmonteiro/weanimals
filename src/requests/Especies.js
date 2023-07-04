@@ -1,6 +1,21 @@
 import api from "../utils/api";
 import Swal from "sweetalert2";
 
+export const ParearPet = async (respostas) => {
+
+	return api.post(`/app/pareamentopet`, { respostas })
+		.then((res) => {
+			console.log("funcao chamada")
+			console.log('resposta api:', res.data.message)
+			return res.data.message;
+		})
+		.catch((err) => {
+			console.log("erro:", err);
+			throw err;
+		});
+};
+
+
 export const AddEspecie = async (
 	formData,
 	token

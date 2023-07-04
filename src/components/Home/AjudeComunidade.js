@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Typography, Box, Grid, Button } from "@mui/material";
-import dog from "../../Images/dog.png";
 import StyledButton from "../Button";
 import bunny from "../../Images/coelhinho.png";
 import paws from "../../Images/paws.png";

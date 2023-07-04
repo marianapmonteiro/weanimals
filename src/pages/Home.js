@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Typography, Container, Box, Grid } from "@mui/material";
 import styled from "@emotion/styled";
 import theme from "../theme/theme";
@@ -156,7 +156,7 @@ function Home() {
 				<CuidadosAnimais />
 				<Adocao />
 				<AjudeComunidade />
-				<Posts />
+				{/* <Posts /> */}
 			</Container>
 		</>
 	);
