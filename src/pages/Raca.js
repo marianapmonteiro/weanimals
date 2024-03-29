@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { GetRacaById } from "../requests/Raca";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
 	Typography,
 	Container,
@@ -7,12 +10,12 @@ import {
 } from "@mui/material";
 import styled from "@emotion/styled";
 import theme from "../theme/theme";
-import { useLocation } from "react-router-dom";
 import Carousel from "react-gallery-carousel";
 import "react-gallery-carousel/dist/index.css";
-import { GetEspecies } from "../requests/Especies";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import EditIcon from '@mui/icons-material/Edit';
+
 
 const MainContainer = styled.div`
 	width: 100%;
@@ -59,51 +62,68 @@ const BoxFlex = styled.div`
 
 
 function Raca() {
+	const { cookies } = useContext(AuthContext);
+	const navigate = useNavigate();
 	const location = useLocation();
-	const { especie, nome, descricao, imagens, cuidadosEspecificos, author } =
-		location.state;
-	const [especieNome, setEspecieNome] = useState("");
+	const searchParams = new URLSearchParams(location.search);
+	const id = searchParams.get("id");
 
-	const images = imagens.map((item) => ({
-		src: `http://localhost:3001/uploads/racas/${item}`,
-	}));
+	const userId = cookies.UserData.userId;
+
+	const [raca, setRaca] = useState()
+	const [imagens, setImagens] = useState([])
+
+
 	useEffect(() => {
-		const fetchData = async () => {
-			const especiesData = await GetEspecies();
-			const filteredEspecie = especiesData.filter((item) => item._id === especie);
-			setEspecieNome(filteredEspecie[0].nome)
-
+		const getRaca = async () => {
+			const raca = await GetRacaById(id)
+			setRaca(raca)
 		}
-		fetchData();
-	}, []);
 
+		getRaca();
+
+	}, [id]);
+
+	console.log("raca", raca)
+	useEffect(() => {
+		const getImgs = () => {
+			const imgs = raca && raca.imagens && raca.imagens.map((item) => ({
+				src: `http://localhost:3001/uploads/racas/${item}`,
+			}));
+			setImagens(imgs)
+		}
+		getImgs();
+
+	}, [raca])
 
 	return (
 		<MainContainer>
-			<CarouselBox>
-				<Carousel images={images} />
-			</CarouselBox>
+			{imagens && imagens.length > 0 && (
+				<CarouselBox>
+					<Carousel images={imagens} />
+				</CarouselBox>
+			)}
 			<Container maxWidth="lg">
 				<BoxFlex style={{ marginTop: "1em" }}>
 					<Typography variant="h5" style={{ fontWeight: "bold" }}>
 						Nome:
 					</Typography>
-					<Typography variant="body1">{nome}</Typography>
+					<Typography variant="body1">{raca && raca.nome}</Typography>
 				</BoxFlex>
 				<BoxFlex>
 					<Typography variant="h5" style={{ fontWeight: "bold" }}>
 						Espécie:
 					</Typography>
-					<Typography alignItems="flex-end" mt={0}>
-						{especieNome}
-					</Typography>
+					{raca && raca.especie === null ? <Typography alignItems="flex-end" mt={0}>Espécie não encontrada</Typography> : <Typography alignItems="flex-end" mt={0}>
+						{raca && raca.especie.nome}
+					</Typography>}
 				</BoxFlex>
 				<BoxFlex style={{ flexDirection: "column", alignItems: "flex-start" }}>
 					<Typography variant="h5" style={{ fontWeight: "bold" }}>
 						Descricao:
 					</Typography>
 					<ReactQuill
-						value={descricao}
+						value={raca && raca.descricao}
 						readOnly={true}
 						theme={"bubble"}
 					/>
@@ -118,13 +138,35 @@ function Raca() {
 							wordBreak: "break-word",
 						}}
 					>
-						{cuidadosEspecificos}
+						{raca && raca.cuidadosEspecificos}
 					</Typography>
 				</BoxFlex>
+				{userId === raca?.authorId && (
+					<Box style={{ display: 'flex', width: "100%", justifyContent: "flex-end", alignItems: "center" }}>
+						<Box style={{
+							cursor: 'pointer', display: 'flex', gap: "0.5em"
+						}}
+							onClick={() => {
+								navigate("/addraca", {
+									state: {
+										alterar: true,
+										racaId: raca._id,
+										altNome: raca.nome,
+										altDescricao: raca.descricao,
+										altCuidadosEspecificos: raca.cuidadosEspecificos,
+										altImgs: raca.imagens,
+									},
+								});
+							}}
+						>
+							<EditIcon />
+							<Typography>Editar</Typography>
+						</Box>
+					</Box>)}
 				<Box style={{ marginTop: '2em', display: 'flex', flexDirection: "column", gap: '2em', width: '100%' }}>
 					<Divider />
 					<Typography >
-						Publicado por: {author}
+						Publicado por: {raca && raca.authorName}
 					</Typography>
 				</Box>
 			</Container>

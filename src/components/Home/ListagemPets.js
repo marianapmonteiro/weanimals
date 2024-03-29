@@ -1,8 +1,10 @@
 import { Typography, Box, Grid, Button } from "@mui/material";
 import dog from "../../Images/cachorrinho.png";
 import StyledButton from "../Button";
+import { useNavigate } from "react-router-dom";
 
 const ListagemPets = () => {
+	const navigate = useNavigate()
 	return (
 		<Box
 			sx={{
@@ -60,6 +62,9 @@ const ListagemPets = () => {
 						<StyledButton
 							variant="contained"
 							text="Veja nossa lista!"
+							onClick={() => {
+								navigate("/animais");
+							}}
 						></StyledButton>
 					</Box>
 				</Grid>

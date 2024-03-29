@@ -3,21 +3,14 @@ import { ParearPet } from '../requests/Especies';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
     Typography,
-    Container,
     Divider,
-    TextField,
     Button,
-    Select,
-    MenuItem,
-    IconButton,
     CircularProgress,
 } from "@mui/material";
 import styled from "@emotion/styled";
-import img from '../Images/mimielolo.jpg'
 import sadEmoji from '../Images/sadEmoji.png'
 import PetsIcon from '@mui/icons-material/Pets';
 import theme from '../theme/theme';
-import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 const MainContainer = styled.div`
@@ -66,7 +59,6 @@ function ResultadoPet() {
             const data = await ParearPet(respostas);
             if (typeof data === 'string') {
                 setDados({ message: data });
-                console.log("dadossss:", dados)
 
             } else {
                 setDados(data[0]);
@@ -97,17 +89,7 @@ function ResultadoPet() {
                     <Typography variant="h5" style={{ fontWeight: "bold" }}>{dados.nome}</Typography>
                 </BoxTitle>
                 <Button variant="outlined" size='large' onClick={() => {
-                    navigate("/especie", {
-                        state: {
-                            id: dados._id,
-                            nome: dados.nome,
-                            descricao: dados.descricao,
-                            etiquetas: dados.etiquetas,
-                            imagens: dados.imagens,
-                            racas: dados.racas,
-                            author: dados.authorName
-                        },
-                    });
+                    navigate(`/especie/?id=${dados._id}`);
                 }}>Ver sobre </Button>
             </MainContainer>
         ) : <MainContainer><CircularProgress /></MainContainer>

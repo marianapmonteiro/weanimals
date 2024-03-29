@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { GetComunidades } from "../requests/Comunidades";
 import { GetRacas } from '../requests/Raca'
+import { GetEspecieById } from "../requests/Especies"
 import {
 	Divider,
 	Typography,
@@ -17,6 +19,7 @@ import 'react-quill/dist/quill.snow.css';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import EditIcon from '@mui/icons-material/Edit';
 
 const MainContainer = styled.div`
 	width: 100%;
@@ -72,14 +75,26 @@ const Alert = styled.div`
 `;
 
 function Especie() {
+	const { cookies } = useContext(AuthContext);
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { id, nome, descricao, etiquetas, imagens, author } = location.state;
+
+	const searchParams = new URLSearchParams(location.search);
+	const id = searchParams.get("id");
+
+	const [especie, setEspecie] = useState();
+
+	const userId = cookies.UserData.userId;
+
 	const [racas, setRacas] = useState([]);
 	const [comunidades, setComunidades] = useState([])
-
+	const [imagens, setImagens] = useState([])
 
 	useEffect(() => {
+		const getEspecie = async () => {
+			const especie = await GetEspecieById(id)
+			setEspecie(especie)
+		}
 		const fetchData = async () => {
 			const racasData = await GetRacas();
 			const filteredRacas = racasData.filter((item) => item.especie === id);
@@ -89,26 +104,36 @@ function Especie() {
 			await GetComunidades(id, setComunidades)
 		};
 
+		getEspecie();
 		fetchData();
 		fetchData2()
-	}, []);
+	}, [id]);
 
-	const images = imagens.map((item) => ({
-		src: `http://localhost:3001/uploads/especies/${item}`,
-	}));
+	useEffect(() => {
+		const getImgs = () => {
+			const imgs = especie && especie.imagens && especie.imagens.map((item) => ({
+				src: `http://localhost:3001/uploads/especies/${item}`,
+			}));
+			setImagens(imgs)
+		}
+		getImgs();
+
+	}, [especie])
 
 	return (
 		<Container maxWidth="lg">
 			<MainContainer>
-				<CarouselBox>
-					<Carousel images={images} />
-				</CarouselBox>
+				{imagens && imagens.length > 0 && (
+					<CarouselBox>
+						<Carousel images={imagens} />
+					</CarouselBox>
+				)}
 				<Container maxWidth="lg">
 					<BoxFlex style={{ marginTop: "1em" }}>
 						<Typography variant="h5" style={{ fontWeight: "bold" }}>
 							Nome:
 						</Typography>
-						<Typography variant="body1">{nome}</Typography>
+						<Typography variant="h6">{especie && especie.nome}</Typography>
 					</BoxFlex>
 					<BoxFlex style={{ flexDirection: "column", alignItems: "flex-start" }}>
 						<Typography variant="h5" mt={0} style={{ fontWeight: "bold" }}>
@@ -124,7 +149,7 @@ function Especie() {
 							{descricao}
 						</Typography> */}
 						<ReactQuill
-							value={descricao}
+							value={especie && especie.descricao}
 							readOnly={true}
 							theme={"bubble"}
 						/>
@@ -142,7 +167,7 @@ function Especie() {
 							flexWrap: "wrap",
 						}}
 					>
-						{etiquetas.map((item) => (
+						{especie && especie.etiquetas.map((item) => (
 							<Alert key={item}>
 								<Typography
 									variant="body1"
@@ -188,16 +213,40 @@ function Especie() {
 								)
 							})
 							: <Typography>Nenhuma comunidade cadastrada</Typography>}
+						{userId === especie?.authorId && (
+							<Box style={{ display: 'flex', width: "100%", justifyContent: "flex-end", alignItems: "center" }}>
+								<Box style={{
+									cursor: 'pointer', display: 'flex', gap: "0.5em"
+								}}
+									onClick={() => {
+										navigate("/addespecie", {
+											state: {
+												alterar: true,
+												especieId: especie._id,
+												altNome: especie.nome,
+												altDescricao: especie.descricao,
+												altEtiquetas: especie.etiquetas,
+												altComunidades: comunidades,
+												altImgs: especie.imagens,
+											},
+										});
+									}}
+								>
+									<EditIcon />
+									<Typography>Editar</Typography>
+								</Box>
+							</Box>)}
 					</Box>
 					<Box style={{ marginTop: '2em', display: 'flex', flexDirection: "column", gap: '2em', width: '100%' }}>
 						<Divider />
 						<Typography >
-							Publicado por: {author}
+							Publicado por: {especie && especie.authorName}
 						</Typography>
 					</Box>
+
 				</Container>
-			</MainContainer>
-		</Container>
+			</MainContainer >
+		</Container >
 	);
 }
 

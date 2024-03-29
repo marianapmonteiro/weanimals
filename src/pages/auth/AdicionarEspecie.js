@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { AddEspecie } from "../../requests/Especies";
+import { AddEspecie, EditEspecie, DeletarEspecie } from "../../requests/Especies";
 import {
 	Typography,
 	Container,
@@ -24,6 +24,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ClearIcon from '@mui/icons-material/Clear';
+import ModalDeletar from "../../components/ModalDeletar";
 
 
 const Title = styled.div`
@@ -97,18 +98,20 @@ const Imgs = styled.img`
 
 function AdicionarEspecie() {
 	const { cookies } = useContext(AuthContext);
+	const navigate = useNavigate();
+	const location = useLocation();
+	const { alterar, especieId, altNome, altDescricao, altEtiquetas, altComunidades, altImgs } = location.state;
+
 	const author = cookies.UserData.name;
 	const token = cookies.WeAnimals;
-	const location = useLocation();
 	const category = location.state.category;
 	const etiquetasValores = ["Hábitos noturnos", "Hábitos vespertinos", "Hábitos matutinos", "Territorialista",
 		"Sociável", "Independente", "Pode viver solto pela casa", "Requer adaptação para viver solto pela casa", "Tem que ter um espaço somente para ele",
 		"Se dá bem com outros animais", "Carinhoso", "Deve viver sem outros pets", "Peludo", "Pelos curtos", "Sem pelos", "Pequeno porte", "Grande porte", "Porte médio"]
-	const [nome, setNome] = useState("");
-	const [descricao, setDescricao] = useState("");
-	const [files, setFiles] = useState([]);
-	const [etiqueta, setEtiqueta] = useState("");
-	const [etiquetas, setEtiquetas] = useState([]);
+	const [nome, setNome] = useState(altNome ? altNome : "");
+	const [descricao, setDescricao] = useState(altDescricao ? altDescricao : "");
+	const [files, setFiles] = useState(altImgs ? altImgs : []);
+	const [etiquetas, setEtiquetas] = useState(altEtiquetas ? altEtiquetas : []);
 	const [loading, setLoading] = useState(false);
 	const [loadingImgs, setLoadingImgs] = useState(false);
 	const [helpText, setHelpText] = useState(false);
@@ -118,14 +121,18 @@ function AdicionarEspecie() {
 	const [comunidadeNome, setComunidadeNome] = useState('');
 	const [comunidadeLink, setComunidadeLink] = useState('')
 	const [redeSocial, setRedeSocial] = useState('')
-	const [comunidades, setComunidades] = useState([])
+	const [comunidades, setComunidades] = useState(altComunidades ? altComunidades : [])
+
+
+	const [openModalDelete, setOpenModalDelete] = useState(false);
+	const [infoModal, setInfoModal] = useState({});
+
 
 	const redesSociais = [
 		'Facebook',
 		'Instagram',
 		'WhatsApp'
 	]
-
 
 	const AddComunidade = () => {
 		setComunidades((preValor) => {
@@ -197,7 +204,7 @@ function AdicionarEspecie() {
 					const comunidadesJSON = JSON.stringify(comunidades);
 					formData.append("comunidades", comunidadesJSON);
 				}
-				await AddEspecie(formData, token);
+				await AddEspecie(formData, token, navigate);
 
 			} catch (error) {
 				console.error("Error uploading images:", error);
@@ -206,11 +213,74 @@ function AdicionarEspecie() {
 		setLoading(false);
 	};
 
+	const editEspecie = async () => {
+		setLoading(true);
+		if (
+			nome === "" ||
+			descricao === "" ||
+			files.length === 0 ||
+			etiquetas.length === 0 ||
+			files.length > 5
+		) {
+			setHelpText(true);
+			setErrorLabel("Preencha todos os campos com os valores corretos")
+		}
+		else {
+			setHelpText(false);
+			try {
+				const formData = new FormData();
+
+				formData.append("nome", nome);
+				formData.append("descricao", descricao);
+
+				let imgsReenviadas = []
+
+				//Pegar do array as imagens vindas do useLocation, ou seja imagens já salvas (formato string)
+				files.forEach((file) => {
+					if (typeof file === 'string') {
+						imgsReenviadas.push(file);
+					} else {
+						formData.append("imagens", file);
+					}
+				});
+
+				imgsReenviadas.forEach((file) => {
+					formData.append("imgsReenviadas", file)
+				})
+
+				etiquetas.forEach((value) => {
+					formData.append('etiquetas[]', value);
+				});
+				if (comunidades.length > 0) {
+					const comunidadesJSON = JSON.stringify(comunidades);
+					formData.append("comunidades", comunidadesJSON);
+				}
+				await EditEspecie(navigate, especieId, formData, token);
+
+			} catch (error) {
+				console.error("Error uploading images:", error);
+			}
+		}
+		setLoading(false);
+	};
+
+	const deletarEspecie = async () => {
+		setInfoModal({
+			id: especieId,
+			nome: nome,
+		});
+		setOpenModalDelete(true);
+	}
+
+	const handleDelete = (navigate, especieId) => {
+		DeletarEspecie(navigate, especieId);
+	};
+
 	return (
 		<Container style={{ marginTop: "2em" }} maxWidth="lg">
 			<Box>
 				<Title>
-					<Typography variant="h4">Adicionar Bichinho (Espécie)</Typography>
+					<Typography variant="h4">{alterar ? "Alterar Bichinho (Espécie)" : "Adicionar Bichinho (Espécie)"}</Typography>
 					<Divider width="100%" />
 				</Title>
 				<BoxInformacoes>
@@ -240,6 +310,7 @@ function AdicionarEspecie() {
 					<TextField
 						style={{ width: "50%" }}
 						margin="dense"
+						value={nome}
 						onChange={(e) => {
 							setNome(e.target.value);
 						}}
@@ -260,16 +331,8 @@ function AdicionarEspecie() {
 							gap: "2em",
 						}}
 					>
-						{/* <TextField
-							style={{ width: "20%" }}
-							multiline
-							margin="dense"
-							onChange={(e) => {
-								setEtiqueta(e.target.value);
-							}}
-						/>{" "} */}
 						<Select
-							value={etiquetasValores}
+							value={altEtiquetas ? altEtiquetas : etiquetasValores}
 							style={{ width: "30%" }}
 							margin="dense"
 							onChange={(e) => {
@@ -322,7 +385,7 @@ function AdicionarEspecie() {
 						{Array.isArray(files) &&
 							files.map((item, index) => (
 								<div style={{ position: "relative" }} key={index}>
-									<Imgs src={URL.createObjectURL(item)} alt="upload" />
+									<Imgs src={item instanceof File ? URL.createObjectURL(item) : `http://localhost:3001/uploads/especies/${item}`} alt="upload" />
 									<IconButton
 										aria-label="delete"
 										size="small"
@@ -386,9 +449,11 @@ function AdicionarEspecie() {
 								/>
 
 							</Box>
-							<Box sx={{ width: "100%", marginTop: "2em", display: "flex", gap: "1em" }}>
-								<Button variant="outlined" onClick={() => { AddComunidade() }}>Adicionar comunidade</Button>
-								<Button variant="outlined" onClick={() => { setComunidade(false) }}>Cancelar</Button>
+							<Box sx={{ width: "100%", marginTop: "1em", display: "flex", gap: "1em" }}>
+
+								<Button variant="outlined" onClick={() => { AddComunidade() }} disabled={comunidadeNome.trim() === '' || comunidadeLink.trim() === ''}
+								>Adicionar comunidade</Button>
+								<Button variant="outlined" onClick={() => { setComunidade(false); setComunidadeLink(''); setComunidadeNome('') }}>Cancelar</Button>
 							</Box>
 						</> : null}
 					{comunidades.length > 0 ?
@@ -410,6 +475,9 @@ function AdicionarEspecie() {
 						</Typography>
 					</BoxForm>
 				) : null}
+				{alterar ? <Box style={{ marginTop: "2em", width: "100%", display: "flex", justifyContent: "flex-end", }}>
+					<Button variant="outlined" color="error" onClick={() => deletarEspecie()}>Deletar espécie</Button>
+				</Box> : null}
 				{loading ? (
 					<BoxBtn><CircularProgress /></BoxBtn>
 				) : (
@@ -424,14 +492,22 @@ function AdicionarEspecie() {
 								bordeRadius: "8px",
 							}}
 							onClick={() => {
-								addEspecie();
+								alterar ? editEspecie() :
+									addEspecie();
 							}}
 						>
-							Adicionar Espécie
-						</Button>{" "}
+							{alterar ? "Alterar Espécie" : "Adicionar Espécie"}
+						</Button>
 					</BoxBtn>
 				)}
 			</Box>
+
+			<ModalDeletar
+				handleClose={setOpenModalDelete}
+				handleDelete={() => handleDelete(navigate, especieId)}
+				handleOpen={openModalDelete}
+				infoModal={infoModal}
+			/>
 		</Container>
 	);
 }

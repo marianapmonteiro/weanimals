@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Typography, Box, Grid, Button } from "@mui/material";
+import { Typography, Box, Button } from "@mui/material";
+import { useNavigate } from 'react-router-dom';
 import StyledButton from "../Button";
 import bunny from "../../Images/coelhinho.png";
-import paws from "../../Images/paws.png";
 
 const AjudeComunidade = () => {
+	const navigate = useNavigate();
 	const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 	useEffect(() => {
 		const handleResize = () => {
@@ -96,6 +97,9 @@ const AjudeComunidade = () => {
 							backgroundColor: "white",
 							paddingInline: "4em",
 							borderRadius: "20px",
+						}}
+						onClick={() => {
+							navigate("/animais");
 						}}
 					>
 						Ir para⠀ ▶

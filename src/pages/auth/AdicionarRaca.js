@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { AddRaca } from "../../requests/Raca";
+import { AddRaca, EditRaca, DeletarRaca } from "../../requests/Raca";
 import {
 	Typography,
 	Container,
@@ -18,6 +18,7 @@ import imagem from "../../Images/addImagem.jpg";
 import theme from "../../theme/theme";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import TextEditor from "../../components/TextEditor";
+import ModalDeletar from "../../components/ModalDeletar";
 
 
 const Box = styled.div`
@@ -79,21 +80,29 @@ const Imgs = styled.img`
 `;
 function AdicionarRaca() {
 	const { cookies } = useContext(AuthContext);
+	const location = useLocation();
+	const navigate = useNavigate();
+	const { alterar, racaId, altNome, altDescricao, altCuidadosEspecificos, altImgs } = location.state;
+
 	const author = cookies.UserData.name;
 	const token = cookies.WeAnimals;
-	const location = useLocation();
-	const [especie, setEspecie] = useState({});
-	const [nome, setNome] = useState("");
-	const [descricao, setDescricao] = useState("");
-	const [files, setFiles] = useState([]);
-	const [cuidadosEspecificos, setCuidadosEspecificos] = useState("");
+	const [especie, setEspecie] = useState(null);
+	const [nome, setNome] = useState(altNome ? altNome : "");
+	const [descricao, setDescricao] = useState(altDescricao ? altDescricao : "");
+	const [files, setFiles] = useState(altImgs ? altImgs : []);
+	const [cuidadosEspecificos, setCuidadosEspecificos] = useState(altCuidadosEspecificos ? altCuidadosEspecificos : "");
 	const [loading, setLoading] = useState(false);
 	const [helpText, setHelpText] = useState(false);
 	const [errorLabel, setErrorLabel] = useState("");
 
+	const [openModalDelete, setOpenModalDelete] = useState(false);
+	const [infoModal, setInfoModal] = useState({});
+
+
 
 	const especies = location.state.especies;
 	const category = location.state.category;
+
 
 	const handleImage = (e) => {
 		const newImages = Array.from(e.target.files);
@@ -111,7 +120,7 @@ function AdicionarRaca() {
 	const addRaca = async () => {
 		setLoading(true);
 		if (
-			especie === {} ||
+			especie === null ||
 			nome === "" ||
 			descricao === "" ||
 			files.length === 0 ||
@@ -136,7 +145,8 @@ function AdicionarRaca() {
 
 				await AddRaca(
 					formData,
-					token
+					token,
+					navigate
 				);
 
 			} catch (error) {
@@ -146,11 +156,67 @@ function AdicionarRaca() {
 		setLoading(false);
 	};
 
+	const editRaca = async () => {
+		setLoading(true);
+		if (
+			nome === "" ||
+			descricao === "" ||
+			files.length === 0 ||
+			files.length > 5
+		) {
+			setHelpText(true);
+			setErrorLabel("Preencha todos os campos com os valores corretos")
+		}
+		else {
+			setHelpText(false);
+			try {
+				const formData = new FormData();
+
+				formData.append("nome", nome);
+				formData.append("descricao", descricao);
+				formData.append("cuidadosEspecificos", cuidadosEspecificos);
+
+				let imgsReenviadas = []
+
+				//Pegar do array as imagens vindas do useLocation, ou seja imagens já salvas (formato string)
+				files.forEach((file) => {
+					if (typeof file === 'string') {
+						imgsReenviadas.push(file);
+					} else {
+						formData.append("imagens", file);
+					}
+				});
+
+				imgsReenviadas.forEach((file) => {
+					formData.append("imgsReenviadas", file)
+				})
+
+				await EditRaca(navigate, racaId, formData, token);
+
+			} catch (error) {
+				console.error("Error uploading images:", error);
+			}
+		}
+		setLoading(false);
+	};
+
+	const deletarRaca = async () => {
+		setInfoModal({
+			id: racaId,
+			nome: nome,
+		});
+		setOpenModalDelete(true);
+	}
+
+	const handleDelete = (navigate, racaId) => {
+		DeletarRaca(navigate, racaId);
+	};
+
 	return (
 		<Container style={{ marginTop: "2em" }} maxWidth="lg">
 			<Box>
 				<Title>
-					<Typography variant="h4">Adicionar Bichinho (Raça)</Typography>
+					<Typography variant="h4">{alterar ? "Alterar Bichinho (Raça)" : "Adicionar Bichinho (Raça)"}</Typography>
 					<Divider width="100%" />
 				</Title>
 				<BoxInformacoes>
@@ -176,7 +242,7 @@ function AdicionarRaca() {
 					</BoxInfo>
 				</BoxInformacoes>
 
-				<BoxForm>
+				{alterar ? null : <BoxForm>
 					<Typography>Espécie</Typography>
 					<Select
 						value={especie}
@@ -190,12 +256,13 @@ function AdicionarRaca() {
 							return <MenuItem value={item}>{item.nome}</MenuItem>;
 						})}
 					</Select>
-				</BoxForm>
+				</BoxForm>}
 				<BoxForm>
 					<Typography>Nome da raça</Typography>
 					<TextField
 						style={{ width: "30%" }}
 						margin="dense"
+						value={nome}
 						onChange={(e) => {
 							setNome(e.target.value);
 						}}
@@ -222,6 +289,7 @@ function AdicionarRaca() {
 						style={{ width: "50%" }}
 						rows={4}
 						multiline
+						value={cuidadosEspecificos}
 						margin="dense"
 						onChange={(e) => {
 							setCuidadosEspecificos(e.target.value);
@@ -249,7 +317,7 @@ function AdicionarRaca() {
 						{Array.isArray(files) &&
 							files.map((item, index) => (
 								<div style={{ position: "relative" }} key={index}>
-									<Imgs src={URL.createObjectURL(item)} alt="upload" />
+									<Imgs src={item instanceof File ? URL.createObjectURL(item) : `http://localhost:3001/uploads/racas/${item}`} alt="upload" />
 									<IconButton
 										aria-label="delete"
 										size="small"
@@ -267,7 +335,9 @@ function AdicionarRaca() {
 							))}
 					</Thumbs>
 				</BoxForm>
-
+				{alterar ? <Box style={{ marginTop: "2em", width: "100%", display: "flex", justifyContent: "flex-end", }}>
+					<Button variant="outlined" color="error" onClick={() => deletarRaca()}>Deletar raça</Button>
+				</Box> : null}
 				{helpText ? (
 					<BoxForm>
 						<Typography variant="body1" style={{ color: "red" }}>
@@ -279,7 +349,6 @@ function AdicionarRaca() {
 					<CircularProgress />
 				) : (
 					<BoxBtn>
-						{" "}
 						<Button
 							variant="contained"
 							style={{
@@ -289,14 +358,22 @@ function AdicionarRaca() {
 								bordeRadius: "8px",
 							}}
 							onClick={() => {
-								addRaca();
+								alterar ? editRaca() :
+									addRaca();
 							}}
 						>
-							Adicionar Raça
-						</Button>{" "}
+							{alterar ? "Alterar Raça" : "Adicionar Raça"}
+						</Button>
 					</BoxBtn>
 				)}
 			</Box>
+			<ModalDeletar
+				handleClose={setOpenModalDelete}
+				handleDelete={() => handleDelete(navigate, racaId)}
+				handleOpen={openModalDelete}
+				infoModal={infoModal}
+
+			/>
 		</Container>
 	);
 }

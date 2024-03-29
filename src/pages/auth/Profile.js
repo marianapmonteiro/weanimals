@@ -77,7 +77,6 @@ function Profile() {
         fetchData();
     }, []);
 
-    console.log('datsa::', publicacoesEspecies, publicacoesRacas)
     const AlterarPerfil = async () => {
         await AltPerfil(name, email, altPassword, oldPassword, password, confirmPassword, token, setCookie);
     }
@@ -90,29 +89,23 @@ function Profile() {
         setAltSenha(false);
     }
     const navigatePublicacoes = (item) => {
+        //Se tiver o campo especie, significa que é uma raça
         if (item.especie) {
-            navigate('/raca', {
-                state: {
-                    especie: item.especie,
-                    nome: item.nome,
-                    descricao: item.descricao,
-                    imagens: item.imagens,
-                    cuidadosEspecificos: item.cuidadosEspecificos,
-                    author: item.authorName
-                }
+            navigate(`/raca/?id=${item._id}`);
+            // navigate('/raca', {
+            //     state: {
+            //         especie: item.especie,
+            //         nome: item.nome,
+            //         descricao: item.descricao,
+            //         imagens: item.imagens,
+            //         cuidadosEspecificos: item.cuidadosEspecificos,
+            //         author: item.authorName,
+            //         authorId: item.authorId
+            //     }
 
-            })
+            // })
         } else {
-            navigate('/especie', {
-                state: {
-                    id: item._id,
-                    nome: item.nome,
-                    descricao: item.descricao,
-                    etiquetas: item.etiquetas,
-                    imagens: item.imagens,
-                    author: item.authorName
-                }
-            })
+            navigate(`/especie/id?=${item._id}`)
         }
 
     }
@@ -171,9 +164,9 @@ function Profile() {
                         </Item> : null}
                     {altSenha ?
                         <Item>
-                            <TextField label="Senha atual" margin="dense" onChange={(e) => { setOldPassword(e.target.value) }} />
-                            <TextField label="Nova senha" margin="dense" onChange={(e) => { setPassword(e.target.value) }} />
-                            <TextField label="Confirmar nova senha" margin="dense" onChange={(e) => { setConfirmPassword(e.target.value) }} />
+                            <TextField label="Senha atual" margin="dense" type="password" onChange={(e) => { setOldPassword(e.target.value) }} />
+                            <TextField label="Nova senha" margin="dense" type="password" onChange={(e) => { setPassword(e.target.value) }} />
+                            <TextField label="Confirmar nova senha" type="password" margin="dense" onChange={(e) => { setConfirmPassword(e.target.value) }} />
                             <div style={{ width: "100%", display: "flex", gap: "1em", marginTop: "2em" }}>
                                 <Button variant="outlined" onClick={() => { AlterarSenha() }}>Alterar senha</Button>
                                 <Button variant="outlined" onClick={() => { setAltSenha(false) }}>Cancelar</Button>

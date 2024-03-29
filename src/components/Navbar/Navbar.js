@@ -32,11 +32,9 @@ const Item = styled.div`
 function Navbar({ navigate }) {
 	const { logoutRequest, cookies } = useContext(AuthContext);
 	const [user, setUser] = useState(cookies.UserData);
-	console.log("usernow", user)
 
 	useEffect(() => {
 		setUser(cookies.UserData);
-		console.log("user:::", user)
 	}, [cookies.UserData, user])
 
 	return (

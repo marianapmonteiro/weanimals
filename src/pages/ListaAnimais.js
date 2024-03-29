@@ -11,6 +11,7 @@ const ListaAnimais = () => {
 	const [racas, setRacas] = useState([]);
 	const [value, setValue] = useState('Aves');
 
+
 	const listagemAnimais = [
 		"Aves",
 		"Répteis",
@@ -26,6 +27,7 @@ const ListaAnimais = () => {
 			const especiesData = await GetEspecies();
 			const filteredEspecies = especiesData.filter((item) => item.category === value);
 			setEspecies(filteredEspecies);
+
 		};
 
 		const fetchData2 = async () => {

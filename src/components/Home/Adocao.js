@@ -81,6 +81,7 @@ const Adocao = () => {
 							variant="contained"
 							text="Ver bichinhos para adoção"
 						/>
+						<p style={{ color: "red", margin: 0, padding: 0, }}>Em breve!</p>
 					</Box>
 				</Grid>
 			</Grid>

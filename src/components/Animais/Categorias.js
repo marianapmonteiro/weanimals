@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Divider, Typography, TextField, InputAdornment } from "@mui/material";
+import { Divider, Typography, TextField, InputAdornment, Skeleton } from "@mui/material";
 import styled from "@emotion/styled";
 import theme from "../../theme/theme";
 import AddIcon from "@mui/icons-material/Add";
@@ -112,17 +112,7 @@ function Categorias({ Racas, Especies, Category }) {
 							<ListItem
 								key={item.nome}
 								onClick={() => {
-									navigate("/especie", {
-										state: {
-											id: item._id,
-											nome: item.nome,
-											descricao: item.descricao,
-											etiquetas: item.etiquetas,
-											imagens: item.imagens,
-											racas: item.racas,
-											author: item.authorName
-										},
-									});
+									navigate(`/especie/?id=${item._id}`);
 								}}
 							>
 								<a>{item.nome}</a>
@@ -180,16 +170,7 @@ function Categorias({ Racas, Especies, Category }) {
 							<ListItem
 								key={item}
 								onClick={() => {
-									navigate("/raca", {
-										state: {
-											nome: item.nome,
-											descricao: item.descricao,
-											cuidadosEspecificos: item.cuidadosEspecificos,
-											imagens: item.imagens,
-											especie: item.especie,
-											author: item.authorName
-										},
-									});
+									navigate(`/raca/?id=${item._id}`);
 								}}
 							>
 								<a>{item.nome}</a>
