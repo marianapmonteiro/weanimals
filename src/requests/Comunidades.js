@@ -1,7 +1,7 @@
 import api from "../utils/api";
 
 export const GetComunidades = (especieId, setComunidades) => {
-    return api.get(`/app/getcomunidades`, {
+    return api.get(`/app/comunidades`, {
         params: { especieId }
     })
         .then((res) => {

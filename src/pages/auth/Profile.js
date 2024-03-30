@@ -105,7 +105,7 @@ function Profile() {
 
             // })
         } else {
-            navigate(`/especie/id?=${item._id}`)
+            navigate(`/especie/?id=${item._id}`)
         }
 
     }

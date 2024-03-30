@@ -22,7 +22,7 @@ export const AddEspecie = async (
 	navigate
 ) => {
 	await api
-		.post(`/app/addespecie`, formData, {
+		.post(`/app/add/especie`, formData, {
 			headers: {
 				"Content-Type": "multipart/form-data",
 				"Authorization": `Bearer ${token}`
@@ -58,7 +58,7 @@ export const AddEspecie = async (
 };
 
 export const GetEspecies = () => {
-	return api.get(`/app/getespecies`)
+	return api.get(`/app/especies`)
 		.then((res) => {
 			return res.data;
 		})
@@ -69,7 +69,7 @@ export const GetEspecies = () => {
 };
 
 export const GetEspecieById = (id) => {
-	return api.get(`/app/getespecie/${id}`)
+	return api.get(`/app/especie/${id}`)
 		.then((res) => {
 			return res.data;
 		})
@@ -80,7 +80,7 @@ export const GetEspecieById = (id) => {
 };
 
 export const GetEspeciesByAuthorId = (token) => {
-	return api.get(`/app/getespeciesbyid`, {
+	return api.get(`/app/especies/author`, {
 		headers: {
 			"Authorization": `Bearer ${token}`
 		}

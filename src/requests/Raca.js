@@ -7,7 +7,7 @@ export const AddRaca = async (
 	navigate
 ) => {
 	await api
-		.post(`/app/addraca`, formData, {
+		.post(`/app/add/raca`, formData, {
 			headers: {
 				"Content-Type": "multipart/form-data",
 				"Authorization": `Bearer ${token}`
@@ -45,7 +45,7 @@ export const AddRaca = async (
 };
 
 export const GetRacas = () => {
-	return api.get(`/app/getracas`)
+	return api.get(`/app/racas`)
 		.then((res) => {
 			return res.data;
 		})
@@ -58,7 +58,7 @@ export const GetRacas = () => {
 export const GetRacaById = (id) => {
 	console.log('id', id)
 
-	return api.get(`/app/getraca/${id}`)
+	return api.get(`/app/raca/${id}`)
 		.then((res) => {
 			return res.data;
 		})
@@ -69,7 +69,7 @@ export const GetRacaById = (id) => {
 };
 
 export const GetRacasByAuthorId = (token) => {
-	return api.get(`/app/getracasbyid`, {
+	return api.get(`/app/racas/author`, {
 		headers: {
 			"Authorization": `Bearer ${token}`
 		}
